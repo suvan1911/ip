@@ -1,4 +1,7 @@
+import java.util.Scanner;
+
 public class LenZaBot {
+    private static final String BYE_COMMAND = "bye";
     public static void main(String[] args) {
         String banner = """
 ██      ███████ ███    ██ ███████  █████  ██████   ██████  ████████ 
@@ -10,7 +13,19 @@ public class LenZaBot {
 
         System.out.println(banner);
         greet();
-        quit();
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.print(">  ");
+            String command = scanner.nextLine();
+
+            if (command.equals(BYE_COMMAND)) {
+                quit();
+            }
+
+            System.out.println(command);
+        }
+
     }
 
     public static void greet() {

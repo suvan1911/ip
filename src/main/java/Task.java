@@ -1,9 +1,14 @@
 public abstract class Task {
     protected final String description;
+    protected final TaskType taskType;
     protected boolean completed;
 
-    public Task(String description) {
+    /**
+     * Creates a task with a description and a fixed task category.
+     */
+    public Task(String description, TaskType taskType) {
         this.description = description;
+        this.taskType = taskType;
         this.completed = false;
     }
 
@@ -28,7 +33,7 @@ public abstract class Task {
     }
 
     public String getTaskIcon() {
-        return "T";
+        return this.taskType.getIcon();
     }
 
     @Override

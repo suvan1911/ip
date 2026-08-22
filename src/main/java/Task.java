@@ -1,11 +1,6 @@
-public class Task {
-    private String description;
-    private boolean completed;
-
-    public Task(String description, boolean completed) {
-        this.description = description;
-        this.completed = completed;
-    }
+public abstract class Task {
+    protected final String description;
+    protected boolean completed;
 
     public Task(String description) {
         this.description = description;
@@ -28,12 +23,16 @@ public class Task {
         this.completed = false;
     }
 
+    public String getStatusIcon() {
+        return this.completed ? "X" : " ";
+    }
+
+    public String getTaskIcon() {
+        return "T";
+    }
+
     @Override
     public String toString() {
-        if (this.completed) {
-            return String.format("[X] %s", this.description);
-        } else {
-            return String.format("[ ] %s", this.description);
-        }
+        return String.format("[%s][%s] %s", getTaskIcon(), getStatusIcon(), this.description);
     }
 }

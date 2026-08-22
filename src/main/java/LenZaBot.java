@@ -32,20 +32,28 @@ public class LenZaBot {
                 continue;
             }
 
-            String[] parts = input.split(" ", 2);
-            String command = parts[0];
-            String argument = parts.length > 1 ? parts[1] : "";
-
-            switch (command) {
-                case BYE_COMMAND -> handleByeCommand();
-                case LIST_COMMAND -> handleListCommand();
-                case MARK_COMMAND -> handleMarkCommand(argument);
-                case UNMARK_COMMAND -> handleUnmarkCommand(argument);
-                case TODO_COMMAND -> handleTodoCommand(argument);
-                case DEADLINE_COMMAND -> handleDeadlineCommand(argument);
-                case EVENT_COMMAND -> handleEventCommand(argument);
-                default -> handleDefaultCommand(input);
+            try {
+                handleCommand(input);
+            } catch (LenZaBotException e) {
+                printError(e.getMessage());
             }
+        }
+    }
+
+    public static void handleCommand(String input) throws LenZaBotException {
+        int firstSpaceIndex = input.indexOf(' ');
+        String command = firstSpaceIndex == -1 ? input : input.substring(0, firstSpaceIndex);
+        String argument = firstSpaceIndex == -1 ? "" : input.substring(firstSpaceIndex + 1).trim();
+
+        switch (command) {
+            case BYE_COMMAND -> handleByeCommand(argument);
+            case LIST_COMMAND -> handleListCommand(argument);
+            case MARK_COMMAND -> handleMarkCommand(argument);
+            case UNMARK_COMMAND -> handleUnmarkCommand(argument);
+            case TODO_COMMAND -> handleTodoCommand(argument);
+            case DEADLINE_COMMAND -> handleDeadlineCommand(argument);
+            case EVENT_COMMAND -> handleEventCommand(argument);
+            default -> handleDefaultCommand(command);
         }
     }
 
@@ -58,11 +66,17 @@ public class LenZaBot {
         System.exit(0);
     }
 
-    public static void handleByeCommand() {
+    public static void printError(String message) {
+        System.out.println("Oops: " + message);
+    }
+
+    public static void handleByeCommand(String argument) throws LenZaBotException {
+        ensureNoArgument(BYE_COMMAND, argument);
         quit();
     }
 
-    public static void handleListCommand() {
+    public static void handleListCommand(String argument) throws LenZaBotException {
+        ensureNoArgument(LIST_COMMAND, argument);
         for (int i = 0; i < numTasks; i++) {
             System.out.println(
                 String.format("%d. %s", i + 1, tasks[i])
@@ -70,48 +84,110 @@ public class LenZaBot {
         }
     }
 
-    public static void handleMarkCommand(String argument) {
-        Task task = getTaskByIndex(Integer.parseInt(argument));
+    public static void handleMarkCommand(String argument) throws LenZaBotException {
+        Task task = getTaskByIndex(parseTaskIndex(argument, MARK_COMMAND));
         task.markAsCompleted();
         System.out.println(
             String.format("Good job, marked the following task as completed: %s", task)
         );
     }
 
-    public static void handleUnmarkCommand(String argument) {
-        Task task = getTaskByIndex(Integer.parseInt(argument));
+    public static void handleUnmarkCommand(String argument) throws LenZaBotException {
+        Task task = getTaskByIndex(parseTaskIndex(argument, UNMARK_COMMAND));
         task.markAsIncomplete();
         System.out.println(
             String.format("Ok, marked the following task as incomplete: %s", task)
         );
     }
 
-    public static void handleTodoCommand(String argument) {
+    public static void handleTodoCommand(String argument) throws LenZaBotException {
+        ensureNonEmpty(TODO_COMMAND, argument);
         addTask(new Todo(argument));
     }
 
-    public static void handleDeadlineCommand(String argument) {
-        String[] parts = argument.split(" /by ", 2);
-        addTask(new Deadline(parts[0], parts[1]));
+    public static void handleDeadlineCommand(String argument) throws LenZaBotException {
+        ensureNonEmpty(DEADLINE_COMMAND, argument);
+
+        int byMarkerIndex = argument.indexOf(" /by ");
+        if (byMarkerIndex == -1) {
+            throw new LenZaBotException("use `deadline <description> /by <time>`.");
+        }
+
+        String description = argument.substring(0, byMarkerIndex).trim();
+        String by = argument.substring(byMarkerIndex + 5).trim();
+        if (description.isEmpty() || by.isEmpty()) {
+            throw new LenZaBotException("deadline needs both a description and a `/by` value.");
+        }
+
+        addTask(new Deadline(description, by));
     }
 
-    public static void handleEventCommand(String argument) {
-        String[] descriptionAndSchedule = argument.split(" /from ", 2);
-        String[] timeRange = descriptionAndSchedule[1].split(" /to ", 2);
-        addTask(new Event(descriptionAndSchedule[0], timeRange[0], timeRange[1]));
+    public static void handleEventCommand(String argument) throws LenZaBotException {
+        ensureNonEmpty(EVENT_COMMAND, argument);
+
+        int fromMarkerIndex = argument.indexOf(" /from ");
+        int toMarkerIndex = argument.indexOf(" /to ");
+        if (fromMarkerIndex == -1 || toMarkerIndex == -1 || toMarkerIndex <= fromMarkerIndex) {
+            throw new LenZaBotException("use `event <description> /from <start> /to <end>`.");
+        }
+
+        String description = argument.substring(0, fromMarkerIndex).trim();
+        String from = argument.substring(fromMarkerIndex + 7, toMarkerIndex).trim();
+        String to = argument.substring(toMarkerIndex + 5).trim();
+        if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            throw new LenZaBotException("event needs a description, `/from`, and `/to` values.");
+        }
+
+        addTask(new Event(description, from, to));
     }
 
-    public static void handleDefaultCommand(String input) {
-        System.out.println("I dont undertsand. Please ask chatgpt :)");
+    public static void handleDefaultCommand(String command) throws LenZaBotException {
+        throw new LenZaBotException(
+            String.format("I dont understand what you mean by \"%s\".", command)
+        );
     }
 
     // Returns the task associated to the one-based index (as shown by printTasks)
-    public static Task getTaskByIndex(int index) {
+    public static Task getTaskByIndex(int index) throws LenZaBotException {
+        if (numTasks == 0) {
+            throw new LenZaBotException("there are no tasks in the list yet.");
+        }
+
+        if (index < 1 || index > numTasks) {
+            throw new LenZaBotException("task number must be between 1 and " + numTasks + ".");
+        }
+
         return tasks[index - 1];
     }
 
-    public static void addTask(Task task) {
+    public static void addTask(Task task) throws LenZaBotException {
+        if (numTasks >= tasks.length) {
+            throw new LenZaBotException("the task list is full.");
+        }
+
         tasks[numTasks++] = task;
         System.out.println(String.format("Added task: %s", task));
+    }
+
+    public static void ensureNoArgument(String command, String argument) throws LenZaBotException {
+        if (!argument.isEmpty()) {
+            throw new LenZaBotException("`" + command + "` does not take extra text.");
+        }
+    }
+
+    public static void ensureNonEmpty(String command, String argument) throws LenZaBotException {
+        if (argument.isEmpty()) {
+            throw new LenZaBotException("the description for `" + command + "` cannot be empty.");
+        }
+    }
+
+    public static int parseTaskIndex(String argument, String command) throws LenZaBotException {
+        ensureNonEmpty(command, argument);
+
+        try {
+            return Integer.parseInt(argument);
+        } catch (NumberFormatException e) {
+            throw new LenZaBotException("`" + command + "` needs a valid task number.");
+        }
     }
 }

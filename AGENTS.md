@@ -33,3 +33,16 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
+
+## UI test maintenance
+
+If you change LenZaBot's console behavior, keep `test/ui-test-plan.md` in sync.
+
+Examples of changes that require updating the UI test plan:
+- new commands
+- changed command parsing
+- changed success messages
+- changed error messages
+- changed list formatting or task rendering
+
+After such changes, run the `test-ui` skill workflow or the bundled runner to verify the updated plan against the program output.

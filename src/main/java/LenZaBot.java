@@ -1,16 +1,19 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+
 
 public class LenZaBot {
     private static final String BYE_COMMAND = "bye";
     private static final String LIST_COMMAND = "list";
     private static final String MARK_COMMAND = "mark";
     private static final String UNMARK_COMMAND = "unmark";
+    private static final String DELETE_COMMAND = "delete";
     private static final String TODO_COMMAND = "todo";
     private static final String DEADLINE_COMMAND = "deadline";
     private static final String EVENT_COMMAND = "event";
 
-    private static int numTasks = 0;
-    private static final Task[] tasks = new Task[100];
+    private static final List<Task> tasks = new ArrayList<>();
 
     public static void main(String[] args) {
         String banner = """
@@ -50,6 +53,7 @@ public class LenZaBot {
             case LIST_COMMAND -> handleListCommand(argument);
             case MARK_COMMAND -> handleMarkCommand(argument);
             case UNMARK_COMMAND -> handleUnmarkCommand(argument);
+            case DELETE_COMMAND -> handleDeleteCommand(argument);
             case TODO_COMMAND -> handleTodoCommand(argument);
             case DEADLINE_COMMAND -> handleDeadlineCommand(argument);
             case EVENT_COMMAND -> handleEventCommand(argument);
@@ -77,9 +81,9 @@ public class LenZaBot {
 
     public static void handleListCommand(String argument) throws LenZaBotException {
         ensureNoArgument(LIST_COMMAND, argument);
-        for (int i = 0; i < numTasks; i++) {
+        for (int i = 0; i < tasks.size(); i++) {
             System.out.println(
-                String.format("%d. %s", i + 1, tasks[i])
+                String.format("%d. %s", i + 1, tasks.get(i))
             );
         }
     }
@@ -98,6 +102,14 @@ public class LenZaBot {
         System.out.println(
             String.format("Ok, marked the following task as incomplete: %s", task)
         );
+    }
+
+    public static void handleDeleteCommand(String argument) throws LenZaBotException {
+        int taskIndex = parseTaskIndex(argument, DELETE_COMMAND);
+        Task removedTask = deleteTask(taskIndex);
+        System.out.println("Noted. I've removed this task:");
+        System.out.println("  " + removedTask);
+        System.out.println(String.format("Now you have %d tasks in the list.", tasks.size()));
     }
 
     public static void handleTodoCommand(String argument) throws LenZaBotException {
@@ -149,24 +161,25 @@ public class LenZaBot {
 
     // Returns the task associated to the one-based index (as shown by printTasks)
     public static Task getTaskByIndex(int index) throws LenZaBotException {
-        if (numTasks == 0) {
+        if (tasks.isEmpty()) {
             throw new LenZaBotException("there are no tasks in the list yet.");
         }
 
-        if (index < 1 || index > numTasks) {
-            throw new LenZaBotException("task number must be between 1 and " + numTasks + ".");
+        if (index < 1 || index > tasks.size()) {
+            throw new LenZaBotException("task number must be between 1 and " + tasks.size() + ".");
         }
 
-        return tasks[index - 1];
+        return tasks.get(index - 1);
     }
 
     public static void addTask(Task task) throws LenZaBotException {
-        if (numTasks >= tasks.length) {
-            throw new LenZaBotException("the task list is full.");
-        }
-
-        tasks[numTasks++] = task;
+        tasks.add(task);
         System.out.println(String.format("Added task: %s", task));
+    }
+
+    public static Task deleteTask(int index) throws LenZaBotException {
+        getTaskByIndex(index);
+        return tasks.remove(index - 1);
     }
 
     public static void ensureNoArgument(String command, String argument) throws LenZaBotException {

@@ -255,3 +255,78 @@ Bye! See ya later.
   ]
 }
 ```
+
+## TC-VALID-DELETE-TASK
+
+Aim: Confirm `delete` removes the selected task and updates the remaining list.
+
+Commands:
+```text
+todo read book
+deadline return book /by June 6th
+event project meeting /from Aug 6th 2pm /to 4pm
+todo join sports club
+list
+delete 3
+list
+bye
+```
+
+Expected output:
+```text
+Added task: [T][ ] read book
+Added task: [D][ ] return book (by: June 6th)
+Added task: [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+Added task: [T][ ] join sports club
+1. [T][ ] read book
+2. [D][ ] return book (by: June 6th)
+3. [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+4. [T][ ] join sports club
+Noted. I've removed this task:
+  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+Now you have 3 tasks in the list.
+1. [T][ ] read book
+2. [D][ ] return book (by: June 6th)
+3. [T][ ] join sports club
+Bye! See ya later.
+```
+
+```json
+{
+  "id": "TC-VALID-DELETE-TASK",
+  "aim": "Confirm `delete` removes the selected task and updates the remaining list.",
+  "commands": [
+    "todo read book",
+    "deadline return book /by June 6th",
+    "event project meeting /from Aug 6th 2pm /to 4pm",
+    "todo join sports club",
+    "list",
+    "delete 3",
+    "list",
+    "bye"
+  ],
+  "expectedOutputs": [
+    ["Added task: [T][ ] read book"],
+    ["Added task: [D][ ] return book (by: June 6th)"],
+    ["Added task: [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)"],
+    ["Added task: [T][ ] join sports club"],
+    [
+      "1. [T][ ] read book",
+      "2. [D][ ] return book (by: June 6th)",
+      "3. [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)",
+      "4. [T][ ] join sports club"
+    ],
+    [
+      "Noted. I've removed this task:",
+      "  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)",
+      "Now you have 3 tasks in the list."
+    ],
+    [
+      "1. [T][ ] read book",
+      "2. [D][ ] return book (by: June 6th)",
+      "3. [T][ ] join sports club"
+    ],
+    ["Bye! See ya later."]
+  ]
+}
+```

@@ -63,6 +63,32 @@ class TaskListTest {
     }
 
     @Test
+    void findTasks_keywordMatchesDescriptions_returnsAllMatches() {
+        Task firstTask = new Todo("read book");
+        Task secondTask = new Todo("return library book");
+        TaskList taskList = new TaskList(List.of(firstTask, secondTask, new Todo("buy milk")));
+
+        List<Task> matchingTasks = taskList.findTasks("book");
+
+        assertEquals(List.of(firstTask, secondTask), matchingTasks);
+    }
+
+    @Test
+    void findTasks_keywordUsesDifferentCase_returnsMatch() {
+        Task task = new Todo("Read Book");
+        TaskList taskList = new TaskList(List.of(task));
+
+        assertEquals(List.of(task), taskList.findTasks("BOOK"));
+    }
+
+    @Test
+    void findTasks_noMatchingDescription_returnsEmptyList() {
+        TaskList taskList = new TaskList(List.of(new Todo("read book")));
+
+        assertEquals(List.of(), taskList.findTasks("milk"));
+    }
+
+    @Test
     void markTask_emptyList_throwsException() {
         TaskList taskList = new TaskList(List.of());
 

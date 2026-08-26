@@ -2,6 +2,7 @@ package lenzabot.task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import lenzabot.LenZaBotException;
 
@@ -80,6 +81,25 @@ public class TaskList {
      */
     public List<Task> getAllTasks() {
         return tasks;
+    }
+
+    /**
+     * Returns tasks whose descriptions contain the given keyword,
+     * ignoring letter case.
+     *
+     * @param keyword Text to search for within task descriptions.
+     * @return Matching tasks in their original list order.
+     */
+    public List<Task> findTasks(String keyword) {
+        String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
+        List<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            String normalizedDescription = task.getDescription().toLowerCase(Locale.ROOT);
+            if (normalizedDescription.contains(normalizedKeyword)) {
+                matchingTasks.add(task);
+            }
+        }
+        return matchingTasks;
     }
 
     // Returns the task associated with the one-based index shown to the

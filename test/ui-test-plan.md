@@ -75,6 +75,37 @@ Bye! See ya later.
 }
 ```
 
+## TC-INVALID-FIND-EMPTY
+
+Aim: Reject a `find` command without a search keyword.
+
+Commands:
+```text
+find
+bye
+```
+
+Expected output:
+```text
+Oops: the keyword for `find` cannot be empty.
+Bye! See ya later.
+```
+
+```json
+{
+  "id": "TC-INVALID-FIND-EMPTY",
+  "aim": "Reject a `find` command without a search keyword.",
+  "commands": [
+    "find",
+    "bye"
+  ],
+  "expectedOutputs": [
+    ["Oops: the keyword for `find` cannot be empty."],
+    ["Bye! See ya later."]
+  ]
+}
+```
+
 ## TC-INVALID-DEADLINE-MISSING-BY
 
 Aim: Reject a `deadline` command that is missing `/by`.
@@ -282,6 +313,59 @@ Bye! See ya later.
     ],
     ["Good job, marked the following task as completed: [D][X] return book (by: Dec 2 2019, 6:00 PM)"],
     ["Ok, marked the following task as incomplete: [D][ ] return book (by: Dec 2 2019, 6:00 PM)"],
+    ["Bye! See ya later."]
+  ]
+}
+```
+
+## TC-VALID-FIND-TASKS
+
+Aim: Find tasks by a case-insensitive keyword in their descriptions.
+
+Commands:
+```text
+todo read book
+deadline return book /by 2/12/2019 1800
+todo buy milk
+find BOOK
+find missing
+bye
+```
+
+Expected output:
+```text
+Added task: [T][ ] read book
+Added task: [D][ ] return book (by: Dec 2 2019, 6:00 PM)
+Added task: [T][ ] buy milk
+Here are the matching tasks in your list:
+1. [T][ ] read book
+2. [D][ ] return book (by: Dec 2 2019, 6:00 PM)
+Here are the matching tasks in your list:
+Bye! See ya later.
+```
+
+```json
+{
+  "id": "TC-VALID-FIND-TASKS",
+  "aim": "Find tasks by a case-insensitive keyword in their descriptions.",
+  "commands": [
+    "todo read book",
+    "deadline return book /by 2/12/2019 1800",
+    "todo buy milk",
+    "find BOOK",
+    "find missing",
+    "bye"
+  ],
+  "expectedOutputs": [
+    ["Added task: [T][ ] read book"],
+    ["Added task: [D][ ] return book (by: Dec 2 2019, 6:00 PM)"],
+    ["Added task: [T][ ] buy milk"],
+    [
+      "Here are the matching tasks in your list:",
+      "1. [T][ ] read book",
+      "2. [D][ ] return book (by: Dec 2 2019, 6:00 PM)"
+    ],
+    ["Here are the matching tasks in your list:"],
     ["Bye! See ya later."]
   ]
 }

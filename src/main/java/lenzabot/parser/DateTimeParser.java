@@ -31,10 +31,15 @@ public class DateTimeParser {
     private static final DateTimeFormatter DISPLAY_FORMATTER =
         DateTimeFormatter.ofPattern("MMM d yyyy, h:mm a", Locale.ENGLISH);
 
+    private DateTimeParser() {
+    }
+
     /**
      * Parses user input into a date-time, accepting any of the supported
      * formats, e.g. "2/12/2019 1800" or "2019-12-02".
      *
+     * @param input Date-time text supplied by the user.
+     * @return Parsed date-time, with date-only values starting at midnight.
      * @throws LenZaBotException If the input matches none of the supported formats.
      */
     public static LocalDateTime parse(String input) throws LenZaBotException {
@@ -64,6 +69,9 @@ public class DateTimeParser {
     /**
      * Returns the given date-time formatted for display,
      * e.g. "Dec 2, 2019, 6:00 PM".
+     *
+     * @param dateTime Date-time to format.
+     * @return Human-readable date-time text.
      */
     public static String format(LocalDateTime dateTime) {
         return dateTime.format(DISPLAY_FORMATTER);

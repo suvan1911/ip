@@ -136,7 +136,7 @@ public class LenZaBot {
             throw new LenZaBotException("deadline needs both a description and a `/by` value.");
         }
 
-        addTask(new Deadline(description, by));
+        addTask(new Deadline(description, DateTimeParser.parse(by)));
     }
 
     public static void handleEventCommand(String argument) throws LenZaBotException {
@@ -155,7 +155,7 @@ public class LenZaBot {
             throw new LenZaBotException("event needs a description, `/from`, and `/to` values.");
         }
 
-        addTask(new Event(description, from, to));
+        addTask(new Event(description, DateTimeParser.parse(from), DateTimeParser.parse(to)));
     }
 
     public static void handleDefaultCommand(String command) throws LenZaBotException {

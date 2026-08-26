@@ -5,6 +5,8 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+$repoRoot = (Get-Location).Path
+
 function Normalize-Text {
     param([string]$Text)
 
@@ -88,7 +90,18 @@ function Run-TestCase {
     param([object]$Case)
 
     $inputText = (($Case.commands | ForEach-Object { [string]$_ }) -join "`n") + "`n"
-    $rawOutput = $inputText | java -cp "src/main/java" LenZaBot 2>&1 | Out-String
+
+    # Run each case in a fresh temp folder so the save file cannot leak
+    # state between cases or touch the user's real data directory.
+    $testDir = Join-Path ([System.IO.Path]::GetTempPath()) ("lenzabot-uitest-" + [guid]::NewGuid().ToString("N"))
+    New-Item -ItemType Directory -Path $testDir | Out-Null
+    Push-Location $testDir
+    try {
+        $rawOutput = $inputText | java -cp (Join-Path $repoRoot "src/main/java") LenZaBot 2>&1 | Out-String
+    } finally {
+        Pop-Location
+        Remove-Item -LiteralPath $testDir -Recurse -Force
+    }
 
     $segments = $rawOutput -split [regex]::Escape(">  ")
     $prelude = $segments[0]

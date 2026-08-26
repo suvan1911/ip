@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,12 +82,23 @@ public class Storage {
             if (fields.length != 4 || fields[2].isEmpty() || fields[3].isEmpty()) {
                 return null;
             }
-            return createTask(new Deadline(fields[2], fields[3]), isCompleted);
+            try {
+                LocalDateTime by = LocalDateTime.parse(fields[3]);
+                return createTask(new Deadline(fields[2], by), isCompleted);
+            } catch (DateTimeParseException e) {
+                return null;
+            }
         case "E":
             if (fields.length != 5 || fields[2].isEmpty() || fields[3].isEmpty() || fields[4].isEmpty()) {
                 return null;
             }
-            return createTask(new Event(fields[2], fields[3], fields[4]), isCompleted);
+            try {
+                LocalDateTime from = LocalDateTime.parse(fields[3]);
+                LocalDateTime to = LocalDateTime.parse(fields[4]);
+                return createTask(new Event(fields[2], from, to), isCompleted);
+            } catch (DateTimeParseException e) {
+                return null;
+            }
         default:
             return null;
         }

@@ -25,6 +25,7 @@ public class LenZaBot {
     private static final String TODO_COMMAND = "todo";
     private static final String DEADLINE_COMMAND = "deadline";
     private static final String EVENT_COMMAND = "event";
+    private static final String FIND_COMMAND = "find";
 
     private final Storage storage;
     private final Ui ui = new Ui();
@@ -68,15 +69,16 @@ public class LenZaBot {
         Parser.ParsedInput parsedInput = Parser.parse(input);
 
         switch (parsedInput.command()) {
-        case BYE_COMMAND -> handleByeCommand(parsedInput.argument());
-        case LIST_COMMAND -> handleListCommand(parsedInput.argument());
-        case MARK_COMMAND -> handleMarkCommand(parsedInput.argument());
-        case UNMARK_COMMAND -> handleUnmarkCommand(parsedInput.argument());
-        case DELETE_COMMAND -> handleDeleteCommand(parsedInput.argument());
-        case TODO_COMMAND -> handleTodoCommand(parsedInput.argument());
-        case DEADLINE_COMMAND -> handleDeadlineCommand(parsedInput.argument());
-        case EVENT_COMMAND -> handleEventCommand(parsedInput.argument());
-        default -> handleDefaultCommand(parsedInput.command());
+            case BYE_COMMAND -> handleByeCommand(parsedInput.argument());
+            case LIST_COMMAND -> handleListCommand(parsedInput.argument());
+            case MARK_COMMAND -> handleMarkCommand(parsedInput.argument());
+            case UNMARK_COMMAND -> handleUnmarkCommand(parsedInput.argument());
+            case DELETE_COMMAND -> handleDeleteCommand(parsedInput.argument());
+            case TODO_COMMAND -> handleTodoCommand(parsedInput.argument());
+            case DEADLINE_COMMAND -> handleDeadlineCommand(parsedInput.argument());
+            case EVENT_COMMAND -> handleEventCommand(parsedInput.argument());
+            case FIND_COMMAND -> handleFindCommand(parsedInput.argument());
+            default -> handleDefaultCommand(parsedInput.command());
         }
     }
 
@@ -159,6 +161,19 @@ public class LenZaBot {
         }
 
         addTask(new Event(description, DateTimeParser.parse(from), DateTimeParser.parse(to)));
+    }
+
+    private void handleFindCommand(String argument) throws LenZaBotException {
+        if (argument.isEmpty()) {
+            throw new LenZaBotException("the keyword for `find` cannot be empty.");
+        }
+
+        ui.showMessage("Here are the matching tasks in your list:");
+        int number = 1;
+        for (Task task : tasks.findTasks(argument)) {
+            ui.showMessage(String.format("%d. %s", number, task));
+            number++;
+        }
     }
 
     private void handleDefaultCommand(String command) throws LenZaBotException {

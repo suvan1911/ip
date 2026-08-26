@@ -1,4 +1,16 @@
+package lenzabot;
+
 import java.nio.file.Path;
+
+import lenzabot.parser.DateTimeParser;
+import lenzabot.parser.Parser;
+import lenzabot.storage.Storage;
+import lenzabot.task.Deadline;
+import lenzabot.task.Event;
+import lenzabot.task.Task;
+import lenzabot.task.TaskList;
+import lenzabot.task.Todo;
+import lenzabot.ui.Ui;
 
 /**
  * Entry point of the LenZaBot chatbot. Wires together the UI, parser, task

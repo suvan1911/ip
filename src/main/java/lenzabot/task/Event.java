@@ -1,4 +1,8 @@
+package lenzabot.task;
+
 import java.time.LocalDateTime;
+
+import lenzabot.parser.DateTimeParser;
 
 public class Event extends Task {
     private final LocalDateTime from;

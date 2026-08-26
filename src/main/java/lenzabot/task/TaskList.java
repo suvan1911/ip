@@ -1,5 +1,9 @@
+package lenzabot.task;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import lenzabot.LenZaBotException;
 
 /**
  * Holds the list of tasks and provides operations for modifying it.

@@ -1,3 +1,5 @@
+package lenzabot.task;
+
 public abstract class Task {
     /** Separator between fields in the save file format. */
     public static final String SAVE_FILE_SEPARATOR = " | ";

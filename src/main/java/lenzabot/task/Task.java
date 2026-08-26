@@ -14,7 +14,7 @@ public abstract class Task {
     protected final TaskType taskType;
 
     /** Whether this task has been completed. */
-    protected boolean completed;
+    protected boolean completed = false;
 
     /**
      * Creates a task with a description and a fixed task category.
@@ -25,7 +25,6 @@ public abstract class Task {
     public Task(String description, TaskType taskType) {
         this.description = description;
         this.taskType = taskType;
-        this.completed = false;
     }
 
     /**
@@ -91,10 +90,10 @@ public abstract class Task {
      */
     public String toSaveFormat() {
         return String.join(
-            SAVE_FILE_SEPARATOR,
-            getTaskIcon(),
-            isCompleted() ? "1" : "0",
-            this.description
+                SAVE_FILE_SEPARATOR,
+                getTaskIcon(),
+                isCompleted() ? "1" : "0",
+                this.description
         );
     }
 }

@@ -27,20 +27,20 @@ public class Event extends Task {
     @Override
     public String toString() {
         return String.format(
-            "%s (from: %s to: %s)",
-            super.toString(),
-            DateTimeParser.format(this.from),
-            DateTimeParser.format(this.to)
+                "%s (from: %s to: %s)",
+                super.toString(),
+                DateTimeParser.format(this.from),
+                DateTimeParser.format(this.to)
         );
     }
 
     @Override
     public String toSaveFormat() {
         return String.join(
-            SAVE_FILE_SEPARATOR,
-            super.toSaveFormat(),
-            this.from.toString(),
-            this.to.toString()
+                SAVE_FILE_SEPARATOR,
+                super.toSaveFormat(),
+                this.from.toString(),
+                this.to.toString()
         );
     }
 }

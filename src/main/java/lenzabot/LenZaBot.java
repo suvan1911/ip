@@ -65,8 +65,8 @@ public class LenZaBot {
 
             try {
                 executeCommand(input);
-            } catch (LenZaBotException e) {
-                ui.showError(e.getMessage());
+            } catch (LenZaBotException exception) {
+                ui.showError(exception.getMessage());
             }
         }
     }
@@ -74,16 +74,16 @@ public class LenZaBot {
     private void executeCommand(String input) throws LenZaBotException {
         Parser.ParsedInput parsedInput = Parser.parse(input);
 
-        switch (parsedInput.command()) {
-        case BYE_COMMAND -> handleByeCommand(parsedInput.argument());
-        case LIST_COMMAND -> handleListCommand(parsedInput.argument());
-        case MARK_COMMAND -> handleMarkCommand(parsedInput.argument());
-        case UNMARK_COMMAND -> handleUnmarkCommand(parsedInput.argument());
-        case DELETE_COMMAND -> handleDeleteCommand(parsedInput.argument());
-        case TODO_COMMAND -> handleTodoCommand(parsedInput.argument());
-        case DEADLINE_COMMAND -> handleDeadlineCommand(parsedInput.argument());
-        case EVENT_COMMAND -> handleEventCommand(parsedInput.argument());
-        default -> handleDefaultCommand(parsedInput.command());
+        switch (parsedInput.getCommand()) {
+            case BYE_COMMAND -> handleByeCommand(parsedInput.getArgument());
+            case LIST_COMMAND -> handleListCommand(parsedInput.getArgument());
+            case MARK_COMMAND -> handleMarkCommand(parsedInput.getArgument());
+            case UNMARK_COMMAND -> handleUnmarkCommand(parsedInput.getArgument());
+            case DELETE_COMMAND -> handleDeleteCommand(parsedInput.getArgument());
+            case TODO_COMMAND -> handleTodoCommand(parsedInput.getArgument());
+            case DEADLINE_COMMAND -> handleDeadlineCommand(parsedInput.getArgument());
+            case EVENT_COMMAND -> handleEventCommand(parsedInput.getArgument());
+            default -> handleDefaultCommand(parsedInput.getCommand());
         }
     }
 
@@ -106,7 +106,7 @@ public class LenZaBot {
         Task task = tasks.markTask(parseTaskIndex(argument, MARK_COMMAND));
         saveTasks();
         ui.showMessage(
-            String.format("Good job, marked the following task as completed: %s", task)
+                String.format("Good job, marked the following task as completed: %s", task)
         );
     }
 
@@ -114,7 +114,7 @@ public class LenZaBot {
         Task task = tasks.unmarkTask(parseTaskIndex(argument, UNMARK_COMMAND));
         saveTasks();
         ui.showMessage(
-            String.format("Ok, marked the following task as incomplete: %s", task)
+                String.format("Ok, marked the following task as incomplete: %s", task)
         );
     }
 
@@ -124,7 +124,7 @@ public class LenZaBot {
         saveTasks();
         ui.showMessage("Noted. I've removed this task:");
         ui.showMessage("  " + removedTask);
-        ui.showMessage(String.format("Now you have %d tasks in the list.", tasks.size()));
+        ui.showMessage(String.format("Now you have %d tasks in the list.", tasks.getSize()));
     }
 
     private void handleTodoCommand(String argument) throws LenZaBotException {
@@ -170,7 +170,7 @@ public class LenZaBot {
 
     private void handleDefaultCommand(String command) throws LenZaBotException {
         throw new LenZaBotException(
-            String.format("I dont understand what you mean by \"%s\".", command)
+                String.format("I dont understand what you mean by \"%s\".", command)
         );
     }
 
@@ -203,7 +203,7 @@ public class LenZaBot {
 
         try {
             return Integer.parseInt(argument);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException exception) {
             throw new LenZaBotException("`" + command + "` needs a valid task number.");
         }
     }

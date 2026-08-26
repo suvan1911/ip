@@ -49,7 +49,7 @@ public class Storage {
                     loadedTasks.add(task);
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException exception) {
             System.out.println("Oops: could not read the save file. Starting with an empty list.");
         }
         return loadedTasks;
@@ -71,7 +71,7 @@ public class Storage {
                 lines.add(task.toSaveFormat());
             }
             Files.write(saveFilePath, lines);
-        } catch (IOException e) {
+        } catch (IOException exception) {
             System.out.println("Oops: could not save tasks to disk.");
         }
     }
@@ -86,34 +86,34 @@ public class Storage {
 
         boolean isCompleted = fields[1].equals("1");
         switch (fields[0]) {
-        case "T":
-            if (fields.length != 3 || fields[2].isEmpty()) {
+            case "T":
+                if (fields.length != 3 || fields[2].isEmpty()) {
+                    return null;
+                }
+                return createTask(new Todo(fields[2]), isCompleted);
+            case "D":
+                if (fields.length != 4 || fields[2].isEmpty() || fields[3].isEmpty()) {
+                    return null;
+                }
+                try {
+                    LocalDateTime by = LocalDateTime.parse(fields[3]);
+                    return createTask(new Deadline(fields[2], by), isCompleted);
+                } catch (DateTimeParseException exception) {
+                    return null;
+                }
+            case "E":
+                if (fields.length != 5 || fields[2].isEmpty() || fields[3].isEmpty() || fields[4].isEmpty()) {
+                    return null;
+                }
+                try {
+                    LocalDateTime from = LocalDateTime.parse(fields[3]);
+                    LocalDateTime to = LocalDateTime.parse(fields[4]);
+                    return createTask(new Event(fields[2], from, to), isCompleted);
+                } catch (DateTimeParseException exception) {
+                    return null;
+                }
+            default:
                 return null;
-            }
-            return createTask(new Todo(fields[2]), isCompleted);
-        case "D":
-            if (fields.length != 4 || fields[2].isEmpty() || fields[3].isEmpty()) {
-                return null;
-            }
-            try {
-                LocalDateTime by = LocalDateTime.parse(fields[3]);
-                return createTask(new Deadline(fields[2], by), isCompleted);
-            } catch (DateTimeParseException e) {
-                return null;
-            }
-        case "E":
-            if (fields.length != 5 || fields[2].isEmpty() || fields[3].isEmpty() || fields[4].isEmpty()) {
-                return null;
-            }
-            try {
-                LocalDateTime from = LocalDateTime.parse(fields[3]);
-                LocalDateTime to = LocalDateTime.parse(fields[4]);
-                return createTask(new Event(fields[2], from, to), isCompleted);
-            } catch (DateTimeParseException e) {
-                return null;
-            }
-        default:
-            return null;
         }
     }
 

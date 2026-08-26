@@ -46,3 +46,9 @@ Examples of changes that require updating the UI test plan:
 - changed list formatting or task rendering
 
 After such changes, run the `test-ui` skill workflow or the bundled runner to verify the updated plan against the program output.
+
+## JUnit test maintenance
+
+Maintain JUnit tests for roughly the top 50% highest-value methods, prioritizing complex, core, or critical business logic.
+Update the relevant JUnit tests after every code change so that this coverage target remains satisfied.
+Keep tests under `src/test/java` using the same package structure as the production code, and run them using Gradle.

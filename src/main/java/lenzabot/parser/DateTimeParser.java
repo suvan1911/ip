@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.List;
+import java.util.Locale;
 
 import lenzabot.LenZaBotException;
 
@@ -15,19 +17,19 @@ import lenzabot.LenZaBotException;
 public class DateTimeParser {
     // Formats that include a time, tried in order when reading user input.
     private static final List<DateTimeFormatter> DATE_TIME_FORMATS = List.of(
-        DateTimeFormatter.ofPattern("d/M/yyyy HHmm"),
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm")
+        DateTimeFormatter.ofPattern("d/M/uuuu HHmm").withResolverStyle(ResolverStyle.STRICT),
+        DateTimeFormatter.ofPattern("uuuu-MM-dd HHmm").withResolverStyle(ResolverStyle.STRICT)
     );
 
     // Date-only formats; the time defaults to midnight.
     private static final List<DateTimeFormatter> DATE_ONLY_FORMATS = List.of(
-        DateTimeFormatter.ofPattern("d/M/yyyy"),
-        DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        DateTimeFormatter.ofPattern("d/M/uuuu").withResolverStyle(ResolverStyle.STRICT),
+        DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT)
     );
 
     /** Format used whenever a date-time is shown to the user. */
     private static final DateTimeFormatter DISPLAY_FORMATTER =
-        DateTimeFormatter.ofPattern("MMM d yyyy, h:mm a");
+        DateTimeFormatter.ofPattern("MMM d yyyy, h:mm a", Locale.ENGLISH);
 
     /**
      * Parses user input into a date-time, accepting any of the supported

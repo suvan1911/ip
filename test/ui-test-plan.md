@@ -108,11 +108,11 @@ Bye! See ya later.
 
 ## TC-INVALID-DEADLINE-BAD-DATE
 
-Aim: Reject a `deadline` command whose `/by` value is not a supported date/time format.
+Aim: Reject a `deadline` command whose `/by` value is not a valid calendar date.
 
 Commands:
 ```text
-deadline return book /by Sunday
+deadline return book /by 31/2/2020 1800
 bye
 ```
 
@@ -125,9 +125,9 @@ Bye! See ya later.
 ```json
 {
   "id": "TC-INVALID-DEADLINE-BAD-DATE",
-  "aim": "Reject a `deadline` command whose `/by` value is not a supported date/time format.",
+  "aim": "Reject a `deadline` command whose `/by` value is not a valid calendar date.",
   "commands": [
-    "deadline return book /by Sunday",
+    "deadline return book /by 31/2/2020 1800",
     "bye"
   ],
   "expectedOutputs": [

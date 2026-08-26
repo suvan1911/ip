@@ -12,4 +12,9 @@ public class Event extends Task {
     public String toString() {
         return String.format("%s (from: %s to: %s)", super.toString(), this.from, this.to);
     }
+
+    @Override
+    public String toSaveFormat() {
+        return String.join(SAVE_FILE_SEPARATOR, super.toSaveFormat(), this.from, this.to);
+    }
 }

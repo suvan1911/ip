@@ -97,7 +97,7 @@ function Run-TestCase {
     New-Item -ItemType Directory -Path $testDir | Out-Null
     Push-Location $testDir
     try {
-        $rawOutput = $inputText | java -cp (Join-Path $repoRoot "src/main/java") LenZaBot 2>&1 | Out-String
+        $rawOutput = $inputText | java -cp (Join-Path $repoRoot "src/main/java") lenzabot.LenZaBot 2>&1 | Out-String
     } finally {
         Pop-Location
         Remove-Item -LiteralPath $testDir -Recurse -Force
@@ -148,7 +148,8 @@ $transcript
 
 $cases = Get-TestCasesFromPlan -MarkdownPath $PlanPath
 
-$compileOutput = javac src\main\java\*.java 2>&1 | Out-String
+$sources = (Get-ChildItem -Recurse -Filter *.java -Path (Join-Path $repoRoot "src/main/java")).FullName
+$compileOutput = javac -encoding UTF-8 $sources 2>&1 | Out-String
 if ($LASTEXITCODE -ne 0) {
     throw "Compilation failed.`n$compileOutput"
 }

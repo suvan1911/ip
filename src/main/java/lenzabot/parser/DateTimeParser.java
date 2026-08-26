@@ -1,8 +1,12 @@
+package lenzabot.parser;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+
+import lenzabot.LenZaBotException;
 
 /**
  * Converts user-supplied text into {@link LocalDateTime} values and formats

@@ -1,3 +1,5 @@
+package lenzabot;
+
 /**
  * Represents user-facing errors specific to LenZaBot commands.
  */

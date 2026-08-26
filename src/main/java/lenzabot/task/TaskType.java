@@ -1,3 +1,5 @@
+package lenzabot.task;
+
 public enum TaskType {
     TODO("T"),
     DEADLINE("D"),

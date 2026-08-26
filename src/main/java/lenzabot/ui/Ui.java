@@ -1,3 +1,5 @@
+package lenzabot.ui;
+
 import java.util.Scanner;
 
 /**

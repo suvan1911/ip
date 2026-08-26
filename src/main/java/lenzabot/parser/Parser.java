@@ -1,3 +1,5 @@
+package lenzabot.parser;
+
 /**
  * Breaks raw user input into the command word and its argument.
  */

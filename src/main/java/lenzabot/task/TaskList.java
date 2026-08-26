@@ -14,6 +14,8 @@ public class TaskList {
     /**
      * Creates a task list that starts with the given tasks,
      * e.g. loaded from the save file by Storage.
+     *
+     * @param initialTasks Tasks with which to initialize the list.
      */
     public TaskList(List<Task> initialTasks) {
         this.tasks = new ArrayList<>(initialTasks);
@@ -21,6 +23,8 @@ public class TaskList {
 
     /**
      * Adds the given task to the list.
+     *
+     * @param task Task to append to the list.
      */
     public void addTask(Task task) {
         tasks.add(task);
@@ -29,6 +33,8 @@ public class TaskList {
     /**
      * Removes the task at the given one-based index and returns it.
      *
+     * @param index One-based position of the task to remove.
+     * @return Removed task.
      * @throws LenZaBotException If the index does not refer to an existing task.
      */
     public Task deleteTask(int index) throws LenZaBotException {
@@ -39,6 +45,8 @@ public class TaskList {
     /**
      * Marks the task at the given one-based index as completed and returns it.
      *
+     * @param index One-based position of the task to mark.
+     * @return Task that was marked as completed.
      * @throws LenZaBotException If the index does not refer to an existing task.
      */
     public Task markTask(int index) throws LenZaBotException {
@@ -48,6 +56,8 @@ public class TaskList {
     /**
      * Marks the task at the given one-based index as incomplete and returns it.
      *
+     * @param index One-based position of the task to unmark.
+     * @return Task that was marked as incomplete.
      * @throws LenZaBotException If the index does not refer to an existing task.
      */
     public Task unmarkTask(int index) throws LenZaBotException {
@@ -56,6 +66,8 @@ public class TaskList {
 
     /**
      * Returns the number of tasks in the list.
+     *
+     * @return Number of tasks in the list.
      */
     public int size() {
         return tasks.size();
@@ -63,6 +75,8 @@ public class TaskList {
 
     /**
      * Returns all tasks in insertion order, mainly for saving and listing.
+     *
+     * @return Tasks in insertion order.
      */
     public List<Task> getAllTasks() {
         return tasks;

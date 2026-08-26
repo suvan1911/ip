@@ -22,6 +22,8 @@ public class Storage {
 
     /**
      * Creates a storage that reads and writes to the given save file path.
+     *
+     * @param saveFilePath Path of the file used to persist tasks.
      */
     public Storage(Path saveFilePath) {
         this.saveFilePath = saveFilePath;
@@ -31,6 +33,8 @@ public class Storage {
      * Loads tasks from the save file.
      * Returns an empty list if the file does not exist yet; lines that are not
      * in a valid format are skipped instead of crashing the program.
+     *
+     * @return Tasks successfully loaded from the save file.
      */
     public List<Task> loadTasks() {
         List<Task> loadedTasks = new ArrayList<>();
@@ -54,6 +58,8 @@ public class Storage {
     /**
      * Overwrites the save file with the given list of tasks, creating the
      * parent folder first if it does not exist yet.
+     *
+     * @param tasks Tasks to persist in their current order.
      */
     public void saveTasks(List<Task> tasks) {
         try {

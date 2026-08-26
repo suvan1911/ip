@@ -33,12 +33,19 @@ public class LenZaBot {
 
     /**
      * Creates a chatbot whose tasks are loaded from and saved to the given storage.
+     *
+     * @param storage Storage used to load and save tasks.
      */
     public LenZaBot(Storage storage) {
         this.storage = storage;
         this.tasks = new TaskList(storage.loadTasks());
     }
 
+    /**
+     * Starts LenZaBot using the default save-file location.
+     *
+     * @param args Command-line arguments, which LenZaBot does not use.
+     */
     public static void main(String[] args) {
         Storage storage = new Storage(Path.of("data", "lenzabot.txt"));
         new LenZaBot(storage).run();

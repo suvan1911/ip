@@ -106,6 +106,37 @@ Bye! See ya later.
 }
 ```
 
+## TC-INVALID-DEADLINE-BAD-DATE
+
+Aim: Reject a `deadline` command whose `/by` value is not a supported date/time format.
+
+Commands:
+```text
+deadline return book /by Sunday
+bye
+```
+
+Expected output:
+```text
+Oops: `/by`, `/from`, and `/to` must be a date/time like `2/12/2019 1800` or `2019-12-02 1800`.
+Bye! See ya later.
+```
+
+```json
+{
+  "id": "TC-INVALID-DEADLINE-BAD-DATE",
+  "aim": "Reject a `deadline` command whose `/by` value is not a supported date/time format.",
+  "commands": [
+    "deadline return book /by Sunday",
+    "bye"
+  ],
+  "expectedOutputs": [
+    ["Oops: `/by`, `/from`, and `/to` must be a date/time like `2/12/2019 1800` or `2019-12-02 1800`."],
+    ["Bye! See ya later."]
+  ]
+}
+```
+
 ## TC-INVALID-EVENT-MISSING-TO
 
 Aim: Reject an `event` command that does not include `/to`.
@@ -206,8 +237,8 @@ Aim: Confirm a basic happy path across `todo`, `deadline`, `event`, `list`, `mar
 Commands:
 ```text
 todo borrow book
-deadline return book /by Sunday
-event project meeting /from Mon 2pm /to 4pm
+deadline return book /by 2/12/2019 1800
+event project meeting /from 3/12/2019 1400 /to 4/12/2019 1600
 list
 mark 2
 unmark 2
@@ -217,13 +248,13 @@ bye
 Expected output:
 ```text
 Added task: [T][ ] borrow book
-Added task: [D][ ] return book (by: Sunday)
-Added task: [E][ ] project meeting (from: Mon 2pm to: 4pm)
+Added task: [D][ ] return book (by: Dec 2 2019, 6:00 PM)
+Added task: [E][ ] project meeting (from: Dec 3 2019, 2:00 PM to: Dec 4 2019, 4:00 PM)
 1. [T][ ] borrow book
-2. [D][ ] return book (by: Sunday)
-3. [E][ ] project meeting (from: Mon 2pm to: 4pm)
-Good job, marked the following task as completed: [D][X] return book (by: Sunday)
-Ok, marked the following task as incomplete: [D][ ] return book (by: Sunday)
+2. [D][ ] return book (by: Dec 2 2019, 6:00 PM)
+3. [E][ ] project meeting (from: Dec 3 2019, 2:00 PM to: Dec 4 2019, 4:00 PM)
+Good job, marked the following task as completed: [D][X] return book (by: Dec 2 2019, 6:00 PM)
+Ok, marked the following task as incomplete: [D][ ] return book (by: Dec 2 2019, 6:00 PM)
 Bye! See ya later.
 ```
 
@@ -233,8 +264,8 @@ Bye! See ya later.
   "aim": "Confirm a basic happy path across `todo`, `deadline`, `event`, `list`, `mark`, and `unmark`.",
   "commands": [
     "todo borrow book",
-    "deadline return book /by Sunday",
-    "event project meeting /from Mon 2pm /to 4pm",
+    "deadline return book /by 2/12/2019 1800",
+    "event project meeting /from 3/12/2019 1400 /to 4/12/2019 1600",
     "list",
     "mark 2",
     "unmark 2",
@@ -242,15 +273,15 @@ Bye! See ya later.
   ],
   "expectedOutputs": [
     ["Added task: [T][ ] borrow book"],
-    ["Added task: [D][ ] return book (by: Sunday)"],
-    ["Added task: [E][ ] project meeting (from: Mon 2pm to: 4pm)"],
+    ["Added task: [D][ ] return book (by: Dec 2 2019, 6:00 PM)"],
+    ["Added task: [E][ ] project meeting (from: Dec 3 2019, 2:00 PM to: Dec 4 2019, 4:00 PM)"],
     [
       "1. [T][ ] borrow book",
-      "2. [D][ ] return book (by: Sunday)",
-      "3. [E][ ] project meeting (from: Mon 2pm to: 4pm)"
+      "2. [D][ ] return book (by: Dec 2 2019, 6:00 PM)",
+      "3. [E][ ] project meeting (from: Dec 3 2019, 2:00 PM to: Dec 4 2019, 4:00 PM)"
     ],
-    ["Good job, marked the following task as completed: [D][X] return book (by: Sunday)"],
-    ["Ok, marked the following task as incomplete: [D][ ] return book (by: Sunday)"],
+    ["Good job, marked the following task as completed: [D][X] return book (by: Dec 2 2019, 6:00 PM)"],
+    ["Ok, marked the following task as incomplete: [D][ ] return book (by: Dec 2 2019, 6:00 PM)"],
     ["Bye! See ya later."]
   ]
 }
@@ -263,8 +294,8 @@ Aim: Confirm `delete` removes the selected task and updates the remaining list.
 Commands:
 ```text
 todo read book
-deadline return book /by June 6th
-event project meeting /from Aug 6th 2pm /to 4pm
+deadline return book /by 6/6/2020 1700
+event project meeting /from 6/8/2020 1400 /to 6/8/2020 1600
 todo join sports club
 list
 delete 3
@@ -275,18 +306,18 @@ bye
 Expected output:
 ```text
 Added task: [T][ ] read book
-Added task: [D][ ] return book (by: June 6th)
-Added task: [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+Added task: [D][ ] return book (by: Jun 6 2020, 5:00 PM)
+Added task: [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)
 Added task: [T][ ] join sports club
 1. [T][ ] read book
-2. [D][ ] return book (by: June 6th)
-3. [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+2. [D][ ] return book (by: Jun 6 2020, 5:00 PM)
+3. [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)
 4. [T][ ] join sports club
 Noted. I've removed this task:
-  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+  [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)
 Now you have 3 tasks in the list.
 1. [T][ ] read book
-2. [D][ ] return book (by: June 6th)
+2. [D][ ] return book (by: Jun 6 2020, 5:00 PM)
 3. [T][ ] join sports club
 Bye! See ya later.
 ```
@@ -297,8 +328,8 @@ Bye! See ya later.
   "aim": "Confirm `delete` removes the selected task and updates the remaining list.",
   "commands": [
     "todo read book",
-    "deadline return book /by June 6th",
-    "event project meeting /from Aug 6th 2pm /to 4pm",
+    "deadline return book /by 6/6/2020 1700",
+    "event project meeting /from 6/8/2020 1400 /to 6/8/2020 1600",
     "todo join sports club",
     "list",
     "delete 3",
@@ -307,23 +338,23 @@ Bye! See ya later.
   ],
   "expectedOutputs": [
     ["Added task: [T][ ] read book"],
-    ["Added task: [D][ ] return book (by: June 6th)"],
-    ["Added task: [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)"],
+    ["Added task: [D][ ] return book (by: Jun 6 2020, 5:00 PM)"],
+    ["Added task: [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)"],
     ["Added task: [T][ ] join sports club"],
     [
       "1. [T][ ] read book",
-      "2. [D][ ] return book (by: June 6th)",
-      "3. [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)",
+      "2. [D][ ] return book (by: Jun 6 2020, 5:00 PM)",
+      "3. [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)",
       "4. [T][ ] join sports club"
     ],
     [
       "Noted. I've removed this task:",
-      "  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)",
+      "  [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)",
       "Now you have 3 tasks in the list."
     ],
     [
       "1. [T][ ] read book",
-      "2. [D][ ] return book (by: June 6th)",
+      "2. [D][ ] return book (by: Jun 6 2020, 5:00 PM)",
       "3. [T][ ] join sports club"
     ],
     ["Bye! See ya later."]

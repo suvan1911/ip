@@ -34,6 +34,11 @@ Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
 
+## Coding and Git standards (mandatory)
+
+* All Java code in this repository (including AI-generated code) must follow the SE-EDU Java coding standard (basic + intermediate). Before writing, editing, formatting, or reviewing Java code, load and follow the `seedu-java-coding-standard` skill. For topics it does not cover, use the Google Java Style Guide.
+* All commit messages and branch names in this repository must follow SE-EDU Git conventions. Before proposing or creating a commit message or branch name, load and follow the `seedu-git-standard` skill.
+
 ## UI test maintenance
 
 If you change LenZaBot's console behavior, keep `test/ui-test-plan.md` in sync.

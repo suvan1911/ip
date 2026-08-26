@@ -1,3 +1,4 @@
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,6 +15,7 @@ public class LenZaBot {
     private static final String EVENT_COMMAND = "event";
 
     private static final List<Task> tasks = new ArrayList<>();
+    private static final Storage storage = new Storage(Path.of("data", "lenzabot.txt"));
 
     public static void main(String[] args) {
         String banner = """
@@ -25,6 +27,7 @@ public class LenZaBot {
         """;
 
         System.out.println(banner);
+        tasks.addAll(storage.loadTasks());
         greet();
         Scanner scanner = new Scanner(System.in);
 
@@ -91,6 +94,7 @@ public class LenZaBot {
     public static void handleMarkCommand(String argument) throws LenZaBotException {
         Task task = getTaskByIndex(parseTaskIndex(argument, MARK_COMMAND));
         task.markAsCompleted();
+        storage.saveTasks(tasks);
         System.out.println(
             String.format("Good job, marked the following task as completed: %s", task)
         );
@@ -99,6 +103,7 @@ public class LenZaBot {
     public static void handleUnmarkCommand(String argument) throws LenZaBotException {
         Task task = getTaskByIndex(parseTaskIndex(argument, UNMARK_COMMAND));
         task.markAsIncomplete();
+        storage.saveTasks(tasks);
         System.out.println(
             String.format("Ok, marked the following task as incomplete: %s", task)
         );
@@ -174,12 +179,15 @@ public class LenZaBot {
 
     public static void addTask(Task task) throws LenZaBotException {
         tasks.add(task);
+        storage.saveTasks(tasks);
         System.out.println(String.format("Added task: %s", task));
     }
 
     public static Task deleteTask(int index) throws LenZaBotException {
         getTaskByIndex(index);
-        return tasks.remove(index - 1);
+        Task removedTask = tasks.remove(index - 1);
+        storage.saveTasks(tasks);
+        return removedTask;
     }
 
     public static void ensureNoArgument(String command, String argument) throws LenZaBotException {

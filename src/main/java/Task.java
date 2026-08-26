@@ -1,4 +1,7 @@
 public abstract class Task {
+    /** Separator between fields in the save file format. */
+    public static final String SAVE_FILE_SEPARATOR = " | ";
+
     protected final String description;
     protected final TaskType taskType;
     protected boolean completed;
@@ -39,5 +42,18 @@ public abstract class Task {
     @Override
     public String toString() {
         return String.format("[%s][%s] %s", getTaskIcon(), getStatusIcon(), this.description);
+    }
+
+    /**
+     * Returns the one-line format used by Storage to persist this task,
+     * e.g. "T | 0 | read book" for an incomplete todo.
+     */
+    public String toSaveFormat() {
+        return String.join(
+            SAVE_FILE_SEPARATOR,
+            getTaskIcon(),
+            isCompleted() ? "1" : "0",
+            this.description
+        );
     }
 }

@@ -21,3 +21,6 @@ text-ui-test/EXPECTED-UNIX.TXT
 
 # Java bytecode
 *.class
+
+# LenZaBot save data created at runtime
+/data/

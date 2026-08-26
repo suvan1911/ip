@@ -1,5 +1,8 @@
 package lenzabot.task;
 
+/**
+ * Enumerates the supported task categories and their display icons.
+ */
 public enum TaskType {
     TODO("T"),
     DEADLINE("D"),

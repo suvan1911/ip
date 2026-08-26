@@ -4,11 +4,31 @@ package lenzabot.parser;
  * Breaks raw user input into the command word and its argument.
  */
 public class Parser {
+    private Parser() {
+    }
 
     /**
      * Represents user input split into its command word and argument.
      */
-    public record ParsedInput(String command, String argument) {
+    public static class ParsedInput {
+        private final String command;
+        private final String argument;
+
+        /**
+         * Creates parsed input with a command word and argument.
+         */
+        public ParsedInput(String command, String argument) {
+            this.command = command;
+            this.argument = argument;
+        }
+
+        public String getCommand() {
+            return command;
+        }
+
+        public String getArgument() {
+            return argument;
+        }
     }
 
     /**
@@ -21,8 +41,8 @@ public class Parser {
             return new ParsedInput(input, "");
         }
         return new ParsedInput(
-            input.substring(0, firstSpaceIndex),
-            input.substring(firstSpaceIndex + 1).trim()
+                input.substring(0, firstSpaceIndex),
+                input.substring(firstSpaceIndex + 1).trim()
         );
     }
 }

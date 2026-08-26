@@ -10,16 +10,22 @@ public class Ui {
     private final Scanner scanner = new Scanner(System.in);
 
     /**
+     * Creates a console UI that reads from standard input.
+     */
+    public Ui() {
+    }
+
+    /**
      * Shows the startup banner and greeting shown when the program starts.
      */
     public void showWelcome() {
         String banner = """
-██      ███████ ███    ██ ███████  █████  ██████   ██████  ████████
-██      ██      ████   ██    ███  ██   ██ ██   ██ ██    ██    ██
-██      █████   ██ ██  ██   ███   ███████ ██████  ██    ██    ██
-██      ██      ██  ██ ██  ███    ██   ██ ██   ██ ██    ██    ██
-███████ ███████ ██   ████ ███████ ██   ██ ██████   ██████     ██
-""";
+                ██      ███████ ███    ██ ███████  █████  ██████   ██████  ████████
+                ██      ██      ████   ██    ███  ██   ██ ██   ██ ██    ██    ██
+                ██      █████   ██ ██  ██   ███   ███████ ██████  ██    ██    ██
+                ██      ██      ██  ██ ██  ███    ██   ██ ██   ██ ██    ██    ██
+                ███████ ███████ ██   ████ ███████ ██   ██ ██████   ██████     ██
+                """;
 
         System.out.println(banner);
         System.out.println("Hi. This is Lenza. What do you want to do?");

@@ -1,12 +1,15 @@
 package lenzabot.task;
 
+/**
+ * Represents a task with a description, category, and completion status.
+ */
 public abstract class Task {
     /** Separator between fields in the save file format. */
     public static final String SAVE_FILE_SEPARATOR = " | ";
 
     protected final String description;
     protected final TaskType taskType;
-    protected boolean completed;
+    protected boolean completed = false;
 
     /**
      * Creates a task with a description and a fixed task category.
@@ -14,7 +17,6 @@ public abstract class Task {
     public Task(String description, TaskType taskType) {
         this.description = description;
         this.taskType = taskType;
-        this.completed = false;
     }
 
     public String getDescription() {
@@ -25,10 +27,16 @@ public abstract class Task {
         return this.completed;
     }
 
+    /**
+     * Marks this task as completed.
+     */
     public void markAsCompleted() {
         this.completed = true;
     }
 
+    /**
+     * Marks this task as incomplete.
+     */
     public void markAsIncomplete() {
         this.completed = false;
     }
@@ -52,10 +60,10 @@ public abstract class Task {
      */
     public String toSaveFormat() {
         return String.join(
-            SAVE_FILE_SEPARATOR,
-            getTaskIcon(),
-            isCompleted() ? "1" : "0",
-            this.description
+                SAVE_FILE_SEPARATOR,
+                getTaskIcon(),
+                isCompleted() ? "1" : "0",
+                this.description
         );
     }
 }

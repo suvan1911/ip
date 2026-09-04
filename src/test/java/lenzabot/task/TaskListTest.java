@@ -92,10 +92,7 @@ class TaskListTest {
     void markTask_emptyList_throwsException() {
         TaskList taskList = new TaskList(List.of());
 
-        LenZaBotException exception = assertThrows(
-                LenZaBotException.class,
-                () -> taskList.markTask(1)
-        );
+        LenZaBotException exception = assertThrows(LenZaBotException.class, () -> taskList.markTask(1));
 
         assertEquals("there are no tasks in the list yet.", exception.getMessage());
     }
@@ -104,10 +101,7 @@ class TaskListTest {
     void deleteTask_indexBelowRange_throwsException() {
         TaskList taskList = new TaskList(List.of(new Todo("read book")));
 
-        LenZaBotException exception = assertThrows(
-                LenZaBotException.class,
-                () -> taskList.deleteTask(0)
-        );
+        LenZaBotException exception = assertThrows(LenZaBotException.class, () -> taskList.deleteTask(0));
 
         assertEquals("task number must be between 1 and 1.", exception.getMessage());
     }
@@ -116,10 +110,7 @@ class TaskListTest {
     void deleteTask_indexAboveRange_throwsException() {
         TaskList taskList = new TaskList(List.of(new Todo("read book")));
 
-        LenZaBotException exception = assertThrows(
-                LenZaBotException.class,
-                () -> taskList.deleteTask(2)
-        );
+        LenZaBotException exception = assertThrows(LenZaBotException.class, () -> taskList.deleteTask(2));
 
         assertEquals("task number must be between 1 and 1.", exception.getMessage());
     }

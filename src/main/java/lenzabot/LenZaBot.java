@@ -1,6 +1,7 @@
 package lenzabot;
 
 import java.nio.file.Path;
+import java.util.StringJoiner;
 
 import lenzabot.parser.DateTimeParser;
 import lenzabot.parser.Parser;
@@ -64,18 +65,31 @@ public class LenZaBot {
                 continue;
             }
 
-            try {
-                executeCommand(input);
-            } catch (LenZaBotException exception) {
-                ui.showError(exception.getMessage());
+            String response = getResponse(input);
+            if (!response.isEmpty()) {
+                ui.showMessage(response);
             }
         }
     }
 
-    private void executeCommand(String input) throws LenZaBotException {
+    /**
+     * Executes one user command and returns the response to display.
+     *
+     * @param input User command to execute.
+     * @return Response generated for the command.
+     */
+    public String getResponse(String input) {
+        try {
+            return executeCommand(input.trim());
+        } catch (LenZaBotException exception) {
+            return "Oops: " + exception.getMessage();
+        }
+    }
+
+    private String executeCommand(String input) throws LenZaBotException {
         Parser.ParsedInput parsedInput = Parser.parse(input);
 
-        switch (parsedInput.getCommand()) {
+        return switch (parsedInput.getCommand()) {
             case BYE_COMMAND -> handleByeCommand(parsedInput.getArgument());
             case LIST_COMMAND -> handleListCommand(parsedInput.getArgument());
             case MARK_COMMAND -> handleMarkCommand(parsedInput.getArgument());
@@ -86,55 +100,54 @@ public class LenZaBot {
             case EVENT_COMMAND -> handleEventCommand(parsedInput.getArgument());
             case FIND_COMMAND -> handleFindCommand(parsedInput.getArgument());
             default -> handleDefaultCommand(parsedInput.getCommand());
-        }
+        };
     }
 
-    private void handleByeCommand(String argument) throws LenZaBotException {
+    private String handleByeCommand(String argument) throws LenZaBotException {
         ensureNoArgument(BYE_COMMAND, argument);
-        ui.showMessage("Bye! See ya later.");
         isRunning = false;
+        return "Bye! See ya later.";
     }
 
-    private void handleListCommand(String argument) throws LenZaBotException {
+    private String handleListCommand(String argument) throws LenZaBotException {
         ensureNoArgument(LIST_COMMAND, argument);
+        StringJoiner response = new StringJoiner(System.lineSeparator());
         int number = 1;
         for (Task task : tasks.getAllTasks()) {
-            ui.showMessage(String.format("%d. %s", number, task));
+            response.add(String.format("%d. %s", number, task));
             number++;
         }
+        return response.toString();
     }
 
-    private void handleMarkCommand(String argument) throws LenZaBotException {
+    private String handleMarkCommand(String argument) throws LenZaBotException {
         Task task = tasks.markTask(parseTaskIndex(argument, MARK_COMMAND));
         saveTasks();
-        ui.showMessage(
-                String.format("Good job, marked the following task as completed: %s", task)
-        );
+        return String.format("Good job, marked the following task as completed: %s", task);
     }
 
-    private void handleUnmarkCommand(String argument) throws LenZaBotException {
+    private String handleUnmarkCommand(String argument) throws LenZaBotException {
         Task task = tasks.unmarkTask(parseTaskIndex(argument, UNMARK_COMMAND));
         saveTasks();
-        ui.showMessage(
-                String.format("Ok, marked the following task as incomplete: %s", task)
-        );
+        return String.format("Ok, marked the following task as incomplete: %s", task);
     }
 
-    private void handleDeleteCommand(String argument) throws LenZaBotException {
+    private String handleDeleteCommand(String argument) throws LenZaBotException {
         int taskIndex = parseTaskIndex(argument, DELETE_COMMAND);
         Task removedTask = tasks.deleteTask(taskIndex);
         saveTasks();
-        ui.showMessage("Noted. I've removed this task:");
-        ui.showMessage("  " + removedTask);
-        ui.showMessage(String.format("Now you have %d tasks in the list.", tasks.getSize()));
+        return String.join(System.lineSeparator(),
+                "Noted. I've removed this task:",
+                "  " + removedTask,
+                String.format("Now you have %d tasks in the list.", tasks.getSize()));
     }
 
-    private void handleTodoCommand(String argument) throws LenZaBotException {
+    private String handleTodoCommand(String argument) throws LenZaBotException {
         ensureNonEmpty(TODO_COMMAND, argument);
-        addTask(new Todo(argument));
+        return addTask(new Todo(argument));
     }
 
-    private void handleDeadlineCommand(String argument) throws LenZaBotException {
+    private String handleDeadlineCommand(String argument) throws LenZaBotException {
         ensureNonEmpty(DEADLINE_COMMAND, argument);
 
         int byMarkerIndex = argument.indexOf(" /by ");
@@ -148,10 +161,10 @@ public class LenZaBot {
             throw new LenZaBotException("deadline needs both a description and a `/by` value.");
         }
 
-        addTask(new Deadline(description, DateTimeParser.parse(by)));
+        return addTask(new Deadline(description, DateTimeParser.parse(by)));
     }
 
-    private void handleEventCommand(String argument) throws LenZaBotException {
+    private String handleEventCommand(String argument) throws LenZaBotException {
         ensureNonEmpty(EVENT_COMMAND, argument);
 
         int fromMarkerIndex = argument.indexOf(" /from ");
@@ -167,33 +180,35 @@ public class LenZaBot {
             throw new LenZaBotException("event needs a description, `/from`, and `/to` values.");
         }
 
-        addTask(new Event(description, DateTimeParser.parse(from), DateTimeParser.parse(to)));
+        return addTask(new Event(description, DateTimeParser.parse(from), DateTimeParser.parse(to)));
     }
 
-    private void handleFindCommand(String argument) throws LenZaBotException {
+    private String handleFindCommand(String argument) throws LenZaBotException {
         if (argument.isEmpty()) {
             throw new LenZaBotException("the keyword for `find` cannot be empty.");
         }
 
-        ui.showMessage("Here are the matching tasks in your list:");
+        StringJoiner response = new StringJoiner(System.lineSeparator());
+        response.add("Here are the matching tasks in your list:");
         int number = 1;
         for (Task task : tasks.findTasks(argument)) {
-            ui.showMessage(String.format("%d. %s", number, task));
+            response.add(String.format("%d. %s", number, task));
             number++;
         }
+        return response.toString();
     }
 
-    private void handleDefaultCommand(String command) throws LenZaBotException {
+    private String handleDefaultCommand(String command) throws LenZaBotException {
         throw new LenZaBotException(
                 String.format("I dont understand what you mean by \"%s\".", command)
         );
     }
 
     // Persists the given newly added task, then confirms the addition.
-    private void addTask(Task task) {
+    private String addTask(Task task) {
         tasks.addTask(task);
         saveTasks();
-        ui.showMessage(String.format("Added task: %s", task));
+        return String.format("Added task: %s", task);
     }
 
     // Saves the current task list through storage so changes survive restarts.

@@ -22,6 +22,36 @@ class LenZaBotTest {
     }
 
     @Test
+    void getResponse_validDeadline_returnsAddedDeadline() {
+        LenZaBot lenZaBot = createLenZaBot();
+
+        assertEquals(
+                "Added task: [D][ ] return book (by: Dec 2 2019, 6:00 PM)",
+                lenZaBot.getResponse("deadline return book /by 2/12/2019 1800")
+        );
+    }
+
+    @Test
+    void getResponse_validEvent_returnsAddedEvent() {
+        LenZaBot lenZaBot = createLenZaBot();
+
+        assertEquals(
+                "Added task: [E][ ] project meeting (from: Dec 2 2019, 2:00 PM to: Dec 2 2019, 4:00 PM)",
+                lenZaBot.getResponse("event project meeting /from 2/12/2019 1400 /to 2/12/2019 1600")
+        );
+    }
+
+    @Test
+    void getResponse_eventMarkersInWrongOrder_returnsUsageError() {
+        LenZaBot lenZaBot = createLenZaBot();
+
+        assertEquals(
+                "Oops: use `event <description> /from <start> /to <end>`.",
+                lenZaBot.getResponse("event project meeting /to 2/12/2019 1600 /from 2/12/2019 1400")
+        );
+    }
+
+    @Test
     void getResponse_invalidCommand_returnsUserFacingError() {
         LenZaBot lenZaBot = createLenZaBot();
 

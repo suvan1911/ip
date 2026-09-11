@@ -66,10 +66,9 @@ public class Storage {
             if (saveFilePath.getParent() != null) {
                 Files.createDirectories(saveFilePath.getParent());
             }
-            List<String> lines = new ArrayList<>();
-            for (Task task : tasks) {
-                lines.add(task.toSaveFormat());
-            }
+            List<String> lines = tasks.stream()
+                    .map(Task::toSaveFormat)
+                    .toList();
             Files.write(saveFilePath, lines);
         } catch (IOException exception) {
             System.out.println("Oops: could not save tasks to disk.");

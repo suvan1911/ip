@@ -154,6 +154,7 @@ public class LenZaBot {
         if (byMarkerIndex == -1) {
             throw new LenZaBotException("use `deadline <description> /by <time>`.");
         }
+        assert byMarkerIndex >= 0 : "validated deadline command must contain a /by marker";
 
         String description = argument.substring(0, byMarkerIndex).trim();
         String by = argument.substring(byMarkerIndex + 5).trim();
@@ -172,6 +173,8 @@ public class LenZaBot {
         if (fromMarkerIndex == -1 || toMarkerIndex == -1 || toMarkerIndex <= fromMarkerIndex) {
             throw new LenZaBotException("use `event <description> /from <start> /to <end>`.");
         }
+        assert fromMarkerIndex >= 0 && toMarkerIndex > fromMarkerIndex
+                : "validated event markers must exist in /from-then-/to order";
 
         String description = argument.substring(0, fromMarkerIndex).trim();
         String from = argument.substring(fromMarkerIndex + 7, toMarkerIndex).trim();
@@ -206,7 +209,10 @@ public class LenZaBot {
 
     // Persists the given newly added task, then confirms the addition.
     private String addTask(Task task) {
+        int previousTaskCount = tasks.getSize();
         tasks.addTask(task);
+        assert tasks.getSize() == previousTaskCount + 1
+                : "adding one task must increase the task count by one";
         saveTasks();
         return String.format("Added task: %s", task);
     }

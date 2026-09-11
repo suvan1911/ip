@@ -44,6 +44,55 @@ Bye! See ya later.
 }
 ```
 
+## TC-VALID-COMMAND-ALIASES
+
+Aim: Confirm common command aliases behave like their full command names.
+
+Commands:
+```text
+t read book
+d return book /by 6/6/2020 1700
+e project meeting /from 6/8/2020 1400 /to 6/8/2020 1600
+ls
+bye
+```
+
+Expected output:
+```text
+Added task: [T][ ] read book
+Added task: [D][ ] return book (by: Jun 6 2020, 5:00 PM)
+Added task: [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)
+1. [T][ ] read book
+2. [D][ ] return book (by: Jun 6 2020, 5:00 PM)
+3. [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)
+Bye! See ya later.
+```
+
+```json
+{
+  "id": "TC-VALID-COMMAND-ALIASES",
+  "aim": "Confirm common command aliases behave like their full command names.",
+  "commands": [
+    "t read book",
+    "d return book /by 6/6/2020 1700",
+    "e project meeting /from 6/8/2020 1400 /to 6/8/2020 1600",
+    "ls",
+    "bye"
+  ],
+  "expectedOutputs": [
+    ["Added task: [T][ ] read book"],
+    ["Added task: [D][ ] return book (by: Jun 6 2020, 5:00 PM)"],
+    ["Added task: [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)"],
+    [
+      "1. [T][ ] read book",
+      "2. [D][ ] return book (by: Jun 6 2020, 5:00 PM)",
+      "3. [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)"
+    ],
+    ["Bye! See ya later."]
+  ]
+}
+```
+
 ## TC-INVALID-UNKNOWN-COMMAND
 
 Aim: Reject an unknown command instead of treating it as a task.

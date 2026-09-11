@@ -1,9 +1,18 @@
 package lenzabot.parser;
 
+import java.util.Map;
+
 /**
  * Breaks raw user input into the command word and its argument.
  */
 public class Parser {
+    private static final Map<String, String> COMMAND_ALIASES = Map.of(
+            "t", "todo",
+            "d", "deadline",
+            "e", "event",
+            "ls", "list"
+    );
+
     private Parser() {
     }
 
@@ -54,11 +63,16 @@ public class Parser {
     public static ParsedInput parse(String input) {
         int firstSpaceIndex = input.indexOf(' ');
         if (firstSpaceIndex == -1) {
-            return new ParsedInput(input, "");
+            return new ParsedInput(canonicalizeCommand(input), "");
         }
         return new ParsedInput(
-                input.substring(0, firstSpaceIndex),
+                canonicalizeCommand(input.substring(0, firstSpaceIndex)),
                 input.substring(firstSpaceIndex + 1).trim()
         );
+    }
+
+    // Converts a supported alias while leaving full and unknown commands unchanged.
+    private static String canonicalizeCommand(String command) {
+        return COMMAND_ALIASES.getOrDefault(command, command);
     }
 }

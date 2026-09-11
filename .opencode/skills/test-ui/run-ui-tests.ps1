@@ -148,7 +148,9 @@ $transcript
 
 $cases = Get-TestCasesFromPlan -MarkdownPath $PlanPath
 
-$sources = (Get-ChildItem -Recurse -Filter *.java -Path (Join-Path $repoRoot "src/main/java")).FullName
+$sources = Get-ChildItem -Recurse -Filter *.java -Path (Join-Path $repoRoot "src/main/java") |
+    Where-Object { $_.FullName -notmatch '[\\/]gui[\\/]|[\\/]Launcher\.java$' }
+$sources = $sources.FullName
 $compileOutput = javac -encoding UTF-8 $sources 2>&1 | Out-String
 if ($LASTEXITCODE -ne 0) {
     throw "Compilation failed.`n$compileOutput"

@@ -37,6 +37,14 @@ class TaskListTest {
     }
 
     @Test
+    void getAllTasks_attemptedExternalMutation_throwsException() {
+        TaskList taskList = new TaskList(List.of(new Todo("read book")));
+
+        assertThrows(UnsupportedOperationException.class, () -> taskList.getAllTasks().clear());
+        assertEquals(1, taskList.getSize());
+    }
+
+    @Test
     void markAndUnmarkTask_validIndex_updatesCompletionStatus() throws LenZaBotException {
         Task task = new Todo("read book");
         TaskList taskList = new TaskList(List.of(task));

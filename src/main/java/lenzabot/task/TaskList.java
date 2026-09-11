@@ -1,6 +1,7 @@
 package lenzabot.task;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -75,12 +76,12 @@ public class TaskList {
     }
 
     /**
-     * Returns all tasks in insertion order, mainly for saving and listing.
+     * Returns an unmodifiable view of all tasks in insertion order.
      *
-     * @return Tasks in insertion order.
+     * @return Unmodifiable view of tasks in insertion order.
      */
     public List<Task> getAllTasks() {
-        return tasks;
+        return Collections.unmodifiableList(tasks);
     }
 
     /**

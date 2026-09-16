@@ -1,16 +1,21 @@
 package lenzabot.gui;
 
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import lenzabot.LenZaBot;
 
 /**
  * Controls LenZaBot's main chat window.
  */
 public class MainWindow extends AnchorPane {
+    private static final Duration EXIT_DELAY = Duration.seconds(1);
+
     @FXML
     private ScrollPane scrollPane;
 
@@ -62,5 +67,12 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getUserDialog(input),
                 responseDialog);
         userInput.clear();
+
+        if (!lenZaBot.isRunning()) {
+            userInput.setDisable(true);
+            PauseTransition exitDelay = new PauseTransition(EXIT_DELAY);
+            exitDelay.setOnFinished(event -> Platform.exit());
+            exitDelay.play();
+        }
     }
 }

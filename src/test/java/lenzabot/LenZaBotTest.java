@@ -1,6 +1,8 @@
 package lenzabot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 
@@ -131,6 +133,23 @@ class LenZaBotTest {
                 "Filed on your task desk: [T][ ] read book",
                 "Warning: This change could not be saved to disk.");
         assertEquals(expected, lenZaBot.getResponse("todo read book"));
+    }
+
+    @Test
+    void getResponse_bye_stopsLenZaBot() {
+        LenZaBot lenZaBot = createLenZaBot();
+
+        assertTrue(lenZaBot.isRunning());
+        assertEquals("Bye! See ya later.", lenZaBot.getResponse("bye"));
+        assertFalse(lenZaBot.isRunning());
+    }
+
+    @Test
+    void getResponse_byeWithArgument_returnsErrorAndKeepsRunning() {
+        LenZaBot lenZaBot = createLenZaBot();
+
+        assertEquals("Oops: `bye` does not take extra text.", lenZaBot.getResponse("bye later"));
+        assertTrue(lenZaBot.isRunning());
     }
 
     private LenZaBot createLenZaBot() {

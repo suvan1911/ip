@@ -105,6 +105,15 @@ public class LenZaBot {
     }
 
     /**
+     * Returns whether LenZaBot is still accepting commands.
+     *
+     * @return True until a valid {@code bye} command is received.
+     */
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    /**
      * Returns whether a response should be emphasized as an error or warning.
      *
      * @param response Response to classify.

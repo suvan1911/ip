@@ -117,6 +117,26 @@ class LenZaBotTest {
     }
 
     @Test
+    void getResponse_deadlineDescriptionEndsWithPipe_returnsDescriptionError() {
+        LenZaBot lenZaBot = createLenZaBot();
+
+        assertEquals(
+                "Oops: task descriptions cannot contain ` | `.",
+                lenZaBot.getResponse("deadline trailing | /by 2026-09-30")
+        );
+    }
+
+    @Test
+    void getResponse_eventDescriptionEndsWithPipe_returnsDescriptionError() {
+        LenZaBot lenZaBot = createLenZaBot();
+
+        assertEquals(
+                "Oops: task descriptions cannot contain ` | `.",
+                lenZaBot.getResponse("event trailing | /from 2026-09-20 /to 2026-09-21")
+        );
+    }
+
+    @Test
     void getResponse_findWithoutMatches_returnsExplicitResult() {
         LenZaBot lenZaBot = createLenZaBot();
 

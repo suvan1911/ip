@@ -303,7 +303,7 @@ public class LenZaBot {
     }
 
     private void ensureValidDescription(String description) throws LenZaBotException {
-        if (description.contains(Task.SAVE_FILE_SEPARATOR)) {
+        if (description.contains(Task.SAVE_FILE_SEPARATOR) || description.endsWith("|")) {
             throw new LenZaBotException("task descriptions cannot contain ` | `.");
         }
     }

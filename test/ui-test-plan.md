@@ -13,6 +13,41 @@ Each test case below includes:
 - the expected output for each command
 - a JSON block used by `.opencode/skills/test-ui/run-ui-tests.ps1`
 
+## TC-INVALID-DESCRIPTION-TRAILING-PIPE
+
+Aim: Reject deadline and event descriptions that end with a save-file separator pipe.
+
+Commands:
+```text
+deadline trailing | /by 2026-09-30
+event trailing | /from 2026-09-20 /to 2026-09-21
+bye
+```
+
+Expected output:
+```text
+Oops: task descriptions cannot contain ` | `.
+Oops: task descriptions cannot contain ` | `.
+Bye! See ya later.
+```
+
+```json
+{
+  "id": "TC-INVALID-DESCRIPTION-TRAILING-PIPE",
+  "aim": "Reject deadline and event descriptions that end with a save-file separator pipe.",
+  "commands": [
+    "deadline trailing | /by 2026-09-30",
+    "event trailing | /from 2026-09-20 /to 2026-09-21",
+    "bye"
+  ],
+  "expectedOutputs": [
+    ["Oops: task descriptions cannot contain ` | `."],
+    ["Oops: task descriptions cannot contain ` | `."],
+    ["Bye! See ya later."]
+  ]
+}
+```
+
 ## TC-INVALID-TODO-EMPTY
 
 Aim: Reject a `todo` command with no description.

@@ -24,8 +24,9 @@ public class Main extends Application {
         fxmlLoader.<MainWindow>getController().setLenZaBot(lenZaBot);
 
         stage.setTitle("LenZaBot");
-        stage.setMinWidth(420);
-        stage.setMinHeight(600);
+        stage.setMinWidth(380);
+        stage.setMinHeight(480);
+        stage.setResizable(true);
         stage.setScene(new Scene(mainWindow));
         stage.show();
     }

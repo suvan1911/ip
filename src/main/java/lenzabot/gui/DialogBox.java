@@ -33,6 +33,7 @@ public class DialogBox extends HBox {
         }
 
         dialog.setText(text);
+        dialog.maxWidthProperty().bind(widthProperty().multiply(0.78).subtract(50));
         avatar.setText(avatarText);
         getStyleClass().add(styleClass);
     }
@@ -51,7 +52,10 @@ public class DialogBox extends HBox {
      * @return User dialog box.
      */
     public static DialogBox getUserDialog(String text) {
-        return new DialogBox(text, "YOU", "user-dialog");
+        DialogBox dialogBox = new DialogBox(text, "", "user-dialog");
+        dialogBox.avatar.setManaged(false);
+        dialogBox.avatar.setVisible(false);
+        return dialogBox;
     }
 
     /**
@@ -62,6 +66,18 @@ public class DialogBox extends HBox {
      */
     public static DialogBox getBotDialog(String text) {
         DialogBox dialogBox = new DialogBox(text, "LZ", "bot-dialog");
+        dialogBox.flip();
+        return dialogBox;
+    }
+
+    /**
+     * Creates a left-aligned dialog that emphasizes an error or warning.
+     *
+     * @param text Error or warning text.
+     * @return Emphasized LenZaBot dialog box.
+     */
+    public static DialogBox getErrorDialog(String text) {
+        DialogBox dialogBox = new DialogBox(text, "!", "error-dialog");
         dialogBox.flip();
         return dialogBox;
     }

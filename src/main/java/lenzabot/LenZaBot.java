@@ -1,6 +1,8 @@
 package lenzabot;
 
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.StringJoiner;
 
 import lenzabot.parser.DateTimeParser;
@@ -18,6 +20,8 @@ import lenzabot.ui.Ui;
  * list, and storage, and routes user commands to their handlers.
  */
 public class LenZaBot {
+    private static final String ERROR_PREFIX = "Oops: ";
+    private static final String SAVE_WARNING = "Warning: This change could not be saved to disk.";
     private static final String BYE_COMMAND = "bye";
     private static final String LIST_COMMAND = "list";
     private static final String MARK_COMMAND = "mark";
@@ -31,6 +35,7 @@ public class LenZaBot {
     private final Storage storage;
     private final Ui ui = new Ui();
     private final TaskList tasks;
+    private final String startupWarning;
     private boolean isRunning = true;
 
     /**
@@ -41,6 +46,7 @@ public class LenZaBot {
     public LenZaBot(Storage storage) {
         this.storage = storage;
         this.tasks = new TaskList(storage.loadTasks());
+        this.startupWarning = storage.getLoadWarning();
     }
 
     /**
@@ -58,6 +64,9 @@ public class LenZaBot {
      */
     public void run() {
         ui.showWelcome();
+        if (startupWarning != null) {
+            ui.showMessage("Warning: " + startupWarning);
+        }
 
         while (isRunning) {
             String input = ui.readCommand();
@@ -82,8 +91,27 @@ public class LenZaBot {
         try {
             return executeCommand(input.trim());
         } catch (LenZaBotException exception) {
-            return "Oops: " + exception.getMessage();
+            return ERROR_PREFIX + exception.getMessage();
         }
+    }
+
+    /**
+     * Returns a warning encountered while loading saved tasks.
+     *
+     * @return Startup warning, or {@code null} when loading completed normally.
+     */
+    public String getStartupWarning() {
+        return startupWarning;
+    }
+
+    /**
+     * Returns whether a response should be emphasized as an error or warning.
+     *
+     * @param response Response to classify.
+     * @return True if the response reports an error or persistence warning.
+     */
+    public static boolean isErrorResponse(String response) {
+        return response.startsWith(ERROR_PREFIX) || response.contains(SAVE_WARNING);
     }
 
     private String executeCommand(String input) throws LenZaBotException {
@@ -111,6 +139,10 @@ public class LenZaBot {
 
     private String handleListCommand(String argument) throws LenZaBotException {
         ensureNoArgument(LIST_COMMAND, argument);
+        if (tasks.getSize() == 0) {
+            return "Your task desk is clear. Add one with `todo`, `deadline`, or `event`.";
+        }
+
         StringJoiner response = new StringJoiner(System.lineSeparator());
         int number = 1;
         for (Task task : tasks.getAllTasks()) {
@@ -122,34 +154,39 @@ public class LenZaBot {
 
     private String handleMarkCommand(String argument) throws LenZaBotException {
         Task task = tasks.markTask(parseTaskIndex(argument, MARK_COMMAND));
-        saveTasks();
-        return String.format("Good job, marked the following task as completed: %s", task);
+        boolean isSaved = saveTasks();
+        return appendSaveWarning(
+                String.format("Good job, marked the following task as completed: %s", task), isSaved);
     }
 
     private String handleUnmarkCommand(String argument) throws LenZaBotException {
         Task task = tasks.unmarkTask(parseTaskIndex(argument, UNMARK_COMMAND));
-        saveTasks();
-        return String.format("Ok, marked the following task as incomplete: %s", task);
+        boolean isSaved = saveTasks();
+        return appendSaveWarning(
+                String.format("Okay, returned this task to the active desk: %s", task), isSaved);
     }
 
     private String handleDeleteCommand(String argument) throws LenZaBotException {
         int taskIndex = parseTaskIndex(argument, DELETE_COMMAND);
         Task removedTask = tasks.deleteTask(taskIndex);
-        saveTasks();
-        return String.join(System.lineSeparator(),
+        boolean isSaved = saveTasks();
+        String response = String.join(System.lineSeparator(),
                 "Noted. I've removed this task:",
                 "  " + removedTask,
                 String.format("Now you have %d tasks in the list.", tasks.getSize()));
+        return appendSaveWarning(response, isSaved);
     }
 
     private String handleTodoCommand(String argument) throws LenZaBotException {
         ensureNonEmpty(TODO_COMMAND, argument);
+        ensureValidDescription(argument);
         return addTask(new Todo(argument));
     }
 
     private String handleDeadlineCommand(String argument) throws LenZaBotException {
         ensureNonEmpty(DEADLINE_COMMAND, argument);
 
+        ensureSingleMarker(argument, "/by", DEADLINE_COMMAND);
         int byMarkerIndex = argument.indexOf(" /by ");
         if (byMarkerIndex == -1) {
             throw new LenZaBotException("use `deadline <description> /by <time>`.");
@@ -161,6 +198,7 @@ public class LenZaBot {
         if (description.isEmpty() || by.isEmpty()) {
             throw new LenZaBotException("deadline needs both a description and a `/by` value.");
         }
+        ensureValidDescription(description);
 
         return addTask(new Deadline(description, DateTimeParser.parse(by)));
     }
@@ -168,6 +206,8 @@ public class LenZaBot {
     private String handleEventCommand(String argument) throws LenZaBotException {
         ensureNonEmpty(EVENT_COMMAND, argument);
 
+        ensureSingleMarker(argument, "/from", EVENT_COMMAND);
+        ensureSingleMarker(argument, "/to", EVENT_COMMAND);
         int fromMarkerIndex = argument.indexOf(" /from ");
         int toMarkerIndex = argument.indexOf(" /to ");
         if (fromMarkerIndex == -1 || toMarkerIndex == -1 || toMarkerIndex <= fromMarkerIndex) {
@@ -182,8 +222,14 @@ public class LenZaBot {
         if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
             throw new LenZaBotException("event needs a description, `/from`, and `/to` values.");
         }
+        ensureValidDescription(description);
 
-        return addTask(new Event(description, DateTimeParser.parse(from), DateTimeParser.parse(to)));
+        LocalDateTime startDateTime = DateTimeParser.parse(from);
+        LocalDateTime endDateTime = DateTimeParser.parse(to);
+        if (!endDateTime.isAfter(startDateTime)) {
+            throw new LenZaBotException("an event must end after it starts.");
+        }
+        return addTask(new Event(description, startDateTime, endDateTime));
     }
 
     private String handleFindCommand(String argument) throws LenZaBotException {
@@ -191,10 +237,15 @@ public class LenZaBot {
             throw new LenZaBotException("the keyword for `find` cannot be empty.");
         }
 
+        List<Task> matchingTasks = tasks.findTasks(argument);
+        if (matchingTasks.isEmpty()) {
+            return String.format("No tasks on the desk match \"%s\".", argument);
+        }
+
         StringJoiner response = new StringJoiner(System.lineSeparator());
         response.add("Here are the matching tasks in your list:");
         int number = 1;
-        for (Task task : tasks.findTasks(argument)) {
+        for (Task task : matchingTasks) {
             response.add(String.format("%d. %s", number, task));
             number++;
         }
@@ -203,7 +254,7 @@ public class LenZaBot {
 
     private String handleDefaultCommand(String command) throws LenZaBotException {
         throw new LenZaBotException(
-                String.format("I dont understand what you mean by \"%s\".", command)
+                String.format("I don't understand the command \"%s\". Try `list` or add a task.", command)
         );
     }
 
@@ -213,13 +264,13 @@ public class LenZaBot {
         tasks.addTask(task);
         assert tasks.getSize() == previousTaskCount + 1
                 : "adding one task must increase the task count by one";
-        saveTasks();
-        return String.format("Added task: %s", task);
+        boolean isSaved = saveTasks();
+        return appendSaveWarning(String.format("Filed on your task desk: %s", task), isSaved);
     }
 
     // Saves the current task list through storage so changes survive restarts.
-    private void saveTasks() {
-        storage.saveTasks(tasks.getAllTasks());
+    private boolean saveTasks() {
+        return storage.saveTasks(tasks.getAllTasks());
     }
 
     private void ensureNoArgument(String command, String argument) throws LenZaBotException {
@@ -232,6 +283,24 @@ public class LenZaBot {
         if (argument.isEmpty()) {
             throw new LenZaBotException("the description for `" + command + "` cannot be empty.");
         }
+    }
+
+    private void ensureSingleMarker(String argument, String marker, String command) throws LenZaBotException {
+        int firstMarkerIndex = argument.indexOf(" " + marker + " ");
+        int lastMarkerIndex = argument.lastIndexOf(" " + marker + " ");
+        if (firstMarkerIndex != lastMarkerIndex) {
+            throw new LenZaBotException("`" + command + "` accepts exactly one `" + marker + "` value.");
+        }
+    }
+
+    private void ensureValidDescription(String description) throws LenZaBotException {
+        if (description.contains(Task.SAVE_FILE_SEPARATOR)) {
+            throw new LenZaBotException("task descriptions cannot contain ` | `.");
+        }
+    }
+
+    private String appendSaveWarning(String response, boolean isSaved) {
+        return isSaved ? response : response + System.lineSeparator() + SAVE_WARNING;
     }
 
     private int parseTaskIndex(String argument, String command) throws LenZaBotException {

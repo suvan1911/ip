@@ -26,7 +26,7 @@
 }
 
 .dialog-container {
-    -fx-padding: 20 12;
+    -fx-padding: 16 10;
 }
 
 .message {
@@ -40,6 +40,25 @@
 
 .user-dialog .message {
     -fx-background-color: #f4c95d;
+    -fx-border-color: transparent;
+    -fx-background-radius: 12 12 3 12;
+}
+
+.bot-dialog .message {
+    -fx-background-radius: 3 12 12 12;
+}
+
+.error-dialog .message {
+    -fx-background-color: #fff0ed;
+    -fx-background-radius: 3 12 12 12;
+    -fx-border-color: #9b3d2f;
+    -fx-border-width: 0 0 0 4;
+    -fx-text-fill: #70271f;
+}
+
+.error-dialog .avatar {
+    -fx-background-color: #9b3d2f;
+    -fx-text-fill: #ffffff;
 }
 
 .avatar {

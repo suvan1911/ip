@@ -38,7 +38,10 @@ public class MainWindow extends AnchorPane {
     public void setLenZaBot(LenZaBot lenZaBot) {
         this.lenZaBot = lenZaBot;
         dialogContainer.getChildren().add(DialogBox.getBotDialog(
-                "Hi! I'm Lenza. Add a task or type `list` to see what you have planned."));
+                "Lenza at your service. Add a task, or type `list` to review your desk."));
+        if (lenZaBot.getStartupWarning() != null) {
+            dialogContainer.getChildren().add(DialogBox.getErrorDialog(lenZaBot.getStartupWarning()));
+        }
     }
 
     /**
@@ -52,9 +55,12 @@ public class MainWindow extends AnchorPane {
         }
 
         String response = lenZaBot.getResponse(input);
+        DialogBox responseDialog = LenZaBot.isErrorResponse(response)
+                ? DialogBox.getErrorDialog(response)
+                : DialogBox.getBotDialog(response);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input),
-                DialogBox.getBotDialog(response));
+                responseDialog);
         userInput.clear();
     }
 }

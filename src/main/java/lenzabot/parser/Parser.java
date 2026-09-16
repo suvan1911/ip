@@ -1,5 +1,6 @@
 package lenzabot.parser;
 
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -54,25 +55,36 @@ public class Parser {
     }
 
     /**
-     * Splits the given input at its first space into a command word and an
-     * argument. Input without a space yields an empty argument.
+     * Splits the given input at its first whitespace into a command word and
+     * an argument. Surrounding and repeated whitespace is normalized.
      *
      * @param input Raw command text entered by the user.
      * @return Input separated into its command and argument.
      */
     public static ParsedInput parse(String input) {
-        int firstSpaceIndex = input.indexOf(' ');
-        if (firstSpaceIndex == -1) {
-            return new ParsedInput(canonicalizeCommand(input), "");
+        String trimmedInput = input.trim();
+        int firstWhitespaceIndex = findFirstWhitespace(trimmedInput);
+        if (firstWhitespaceIndex == -1) {
+            return new ParsedInput(canonicalizeCommand(trimmedInput), "");
         }
         return new ParsedInput(
-                canonicalizeCommand(input.substring(0, firstSpaceIndex)),
-                input.substring(firstSpaceIndex + 1).trim()
+                canonicalizeCommand(trimmedInput.substring(0, firstWhitespaceIndex)),
+                trimmedInput.substring(firstWhitespaceIndex).trim().replaceAll("\\s+", " ")
         );
     }
 
     // Converts a supported alias while leaving full and unknown commands unchanged.
     private static String canonicalizeCommand(String command) {
-        return COMMAND_ALIASES.getOrDefault(command, command);
+        String normalizedCommand = command.toLowerCase(Locale.ROOT);
+        return COMMAND_ALIASES.getOrDefault(normalizedCommand, normalizedCommand);
+    }
+
+    private static int findFirstWhitespace(String input) {
+        for (int index = 0; index < input.length(); index++) {
+            if (Character.isWhitespace(input.charAt(index))) {
+                return index;
+            }
+        }
+        return -1;
     }
 }

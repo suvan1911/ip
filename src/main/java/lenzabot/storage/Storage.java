@@ -19,6 +19,7 @@ import lenzabot.task.Todo;
  */
 public class Storage {
     private final Path saveFilePath;
+    private String loadWarning;
 
     /**
      * Creates a storage that reads and writes to the given save file path.
@@ -38,21 +39,38 @@ public class Storage {
      */
     public List<Task> loadTasks() {
         List<Task> loadedTasks = new ArrayList<>();
+        loadWarning = null;
         if (!Files.exists(saveFilePath)) {
             return loadedTasks;
         }
 
         try {
+            int skippedLineCount = 0;
             for (String line : Files.readAllLines(saveFilePath)) {
                 Task task = parseTask(line);
                 if (task != null) {
                     loadedTasks.add(task);
+                } else {
+                    skippedLineCount++;
                 }
             }
+            if (skippedLineCount > 0) {
+                loadWarning = String.format(
+                        "Skipped %d damaged line(s) in the save file.", skippedLineCount);
+            }
         } catch (IOException exception) {
-            System.out.println("Oops: could not read the save file. Starting with an empty list.");
+            loadWarning = "Could not read the save file, so Lenza started with an empty desk.";
         }
         return loadedTasks;
+    }
+
+    /**
+     * Returns a warning produced while loading, if any.
+     *
+     * @return Load warning, or {@code null} when loading completed normally.
+     */
+    public String getLoadWarning() {
+        return loadWarning;
     }
 
     /**
@@ -60,8 +78,9 @@ public class Storage {
      * parent folder first if it does not exist yet.
      *
      * @param tasks Tasks to persist in their current order.
+     * @return True if all tasks were saved successfully.
      */
-    public void saveTasks(List<Task> tasks) {
+    public boolean saveTasks(List<Task> tasks) {
         try {
             if (saveFilePath.getParent() != null) {
                 Files.createDirectories(saveFilePath.getParent());
@@ -70,8 +89,9 @@ public class Storage {
                     .map(Task::toSaveFormat)
                     .toList();
             Files.write(saveFilePath, lines);
+            return true;
         } catch (IOException exception) {
-            System.out.println("Oops: could not save tasks to disk.");
+            return false;
         }
     }
 
@@ -107,6 +127,9 @@ public class Storage {
                 try {
                     LocalDateTime from = LocalDateTime.parse(fields[3]);
                     LocalDateTime to = LocalDateTime.parse(fields[4]);
+                    if (!to.isAfter(from)) {
+                        return null;
+                    }
                     return createTask(new Event(fields[2], from, to), isCompleted);
                 } catch (DateTimeParseException exception) {
                     return null;

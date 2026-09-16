@@ -59,9 +59,9 @@ bye
 
 Expected output:
 ```text
-Added task: [T][ ] read book
-Added task: [D][ ] return book (by: Jun 6 2020, 5:00 PM)
-Added task: [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)
+Filed on your task desk: [T][ ] read book
+Filed on your task desk: [D][ ] return book (by: Jun 6 2020, 5:00 PM)
+Filed on your task desk: [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)
 1. [T][ ] read book
 2. [D][ ] return book (by: Jun 6 2020, 5:00 PM)
 3. [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)
@@ -80,9 +80,9 @@ Bye! See ya later.
     "bye"
   ],
   "expectedOutputs": [
-    ["Added task: [T][ ] read book"],
-    ["Added task: [D][ ] return book (by: Jun 6 2020, 5:00 PM)"],
-    ["Added task: [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)"],
+    ["Filed on your task desk: [T][ ] read book"],
+    ["Filed on your task desk: [D][ ] return book (by: Jun 6 2020, 5:00 PM)"],
+    ["Filed on your task desk: [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)"],
     [
       "1. [T][ ] read book",
       "2. [D][ ] return book (by: Jun 6 2020, 5:00 PM)",
@@ -105,7 +105,7 @@ bye
 
 Expected output:
 ```text
-Oops: I dont understand what you mean by "blah".
+Oops: I don't understand the command "blah". Try `list` or add a task.
 Bye! See ya later.
 ```
 
@@ -118,7 +118,7 @@ Bye! See ya later.
     "bye"
   ],
   "expectedOutputs": [
-    ["Oops: I dont understand what you mean by \"blah\"."],
+    ["Oops: I don't understand the command \"blah\". Try `list` or add a task."],
     ["Bye! See ya later."]
   ]
 }
@@ -327,14 +327,14 @@ bye
 
 Expected output:
 ```text
-Added task: [T][ ] borrow book
-Added task: [D][ ] return book (by: Dec 2 2019, 6:00 PM)
-Added task: [E][ ] project meeting (from: Dec 3 2019, 2:00 PM to: Dec 4 2019, 4:00 PM)
+Filed on your task desk: [T][ ] borrow book
+Filed on your task desk: [D][ ] return book (by: Dec 2 2019, 6:00 PM)
+Filed on your task desk: [E][ ] project meeting (from: Dec 3 2019, 2:00 PM to: Dec 4 2019, 4:00 PM)
 1. [T][ ] borrow book
 2. [D][ ] return book (by: Dec 2 2019, 6:00 PM)
 3. [E][ ] project meeting (from: Dec 3 2019, 2:00 PM to: Dec 4 2019, 4:00 PM)
 Good job, marked the following task as completed: [D][X] return book (by: Dec 2 2019, 6:00 PM)
-Ok, marked the following task as incomplete: [D][ ] return book (by: Dec 2 2019, 6:00 PM)
+Okay, returned this task to the active desk: [D][ ] return book (by: Dec 2 2019, 6:00 PM)
 Bye! See ya later.
 ```
 
@@ -352,16 +352,16 @@ Bye! See ya later.
     "bye"
   ],
   "expectedOutputs": [
-    ["Added task: [T][ ] borrow book"],
-    ["Added task: [D][ ] return book (by: Dec 2 2019, 6:00 PM)"],
-    ["Added task: [E][ ] project meeting (from: Dec 3 2019, 2:00 PM to: Dec 4 2019, 4:00 PM)"],
+    ["Filed on your task desk: [T][ ] borrow book"],
+    ["Filed on your task desk: [D][ ] return book (by: Dec 2 2019, 6:00 PM)"],
+    ["Filed on your task desk: [E][ ] project meeting (from: Dec 3 2019, 2:00 PM to: Dec 4 2019, 4:00 PM)"],
     [
       "1. [T][ ] borrow book",
       "2. [D][ ] return book (by: Dec 2 2019, 6:00 PM)",
       "3. [E][ ] project meeting (from: Dec 3 2019, 2:00 PM to: Dec 4 2019, 4:00 PM)"
     ],
     ["Good job, marked the following task as completed: [D][X] return book (by: Dec 2 2019, 6:00 PM)"],
-    ["Ok, marked the following task as incomplete: [D][ ] return book (by: Dec 2 2019, 6:00 PM)"],
+    ["Okay, returned this task to the active desk: [D][ ] return book (by: Dec 2 2019, 6:00 PM)"],
     ["Bye! See ya later."]
   ]
 }
@@ -383,13 +383,13 @@ bye
 
 Expected output:
 ```text
-Added task: [T][ ] read book
-Added task: [D][ ] return book (by: Dec 2 2019, 6:00 PM)
-Added task: [T][ ] buy milk
+Filed on your task desk: [T][ ] read book
+Filed on your task desk: [D][ ] return book (by: Dec 2 2019, 6:00 PM)
+Filed on your task desk: [T][ ] buy milk
 Here are the matching tasks in your list:
 1. [T][ ] read book
 2. [D][ ] return book (by: Dec 2 2019, 6:00 PM)
-Here are the matching tasks in your list:
+No tasks on the desk match "missing".
 Bye! See ya later.
 ```
 
@@ -406,15 +406,15 @@ Bye! See ya later.
     "bye"
   ],
   "expectedOutputs": [
-    ["Added task: [T][ ] read book"],
-    ["Added task: [D][ ] return book (by: Dec 2 2019, 6:00 PM)"],
-    ["Added task: [T][ ] buy milk"],
+    ["Filed on your task desk: [T][ ] read book"],
+    ["Filed on your task desk: [D][ ] return book (by: Dec 2 2019, 6:00 PM)"],
+    ["Filed on your task desk: [T][ ] buy milk"],
     [
       "Here are the matching tasks in your list:",
       "1. [T][ ] read book",
       "2. [D][ ] return book (by: Dec 2 2019, 6:00 PM)"
     ],
-    ["Here are the matching tasks in your list:"],
+    ["No tasks on the desk match \"missing\"."],
     ["Bye! See ya later."]
   ]
 }
@@ -438,10 +438,10 @@ bye
 
 Expected output:
 ```text
-Added task: [T][ ] read book
-Added task: [D][ ] return book (by: Jun 6 2020, 5:00 PM)
-Added task: [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)
-Added task: [T][ ] join sports club
+Filed on your task desk: [T][ ] read book
+Filed on your task desk: [D][ ] return book (by: Jun 6 2020, 5:00 PM)
+Filed on your task desk: [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)
+Filed on your task desk: [T][ ] join sports club
 1. [T][ ] read book
 2. [D][ ] return book (by: Jun 6 2020, 5:00 PM)
 3. [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)
@@ -470,10 +470,10 @@ Bye! See ya later.
     "bye"
   ],
   "expectedOutputs": [
-    ["Added task: [T][ ] read book"],
-    ["Added task: [D][ ] return book (by: Jun 6 2020, 5:00 PM)"],
-    ["Added task: [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)"],
-    ["Added task: [T][ ] join sports club"],
+    ["Filed on your task desk: [T][ ] read book"],
+    ["Filed on your task desk: [D][ ] return book (by: Jun 6 2020, 5:00 PM)"],
+    ["Filed on your task desk: [E][ ] project meeting (from: Aug 6 2020, 2:00 PM to: Aug 6 2020, 4:00 PM)"],
+    ["Filed on your task desk: [T][ ] join sports club"],
     [
       "1. [T][ ] read book",
       "2. [D][ ] return book (by: Jun 6 2020, 5:00 PM)",
@@ -490,6 +490,103 @@ Bye! See ya later.
       "2. [D][ ] return book (by: Jun 6 2020, 5:00 PM)",
       "3. [T][ ] join sports club"
     ],
+    ["Bye! See ya later."]
+  ]
+}
+```
+
+## TC-VALID-FLEXIBLE-WHITESPACE
+
+Aim: Accept mixed command case, tabs, and repeated spaces without changing task text.
+
+Commands:
+```text
+ToDo    read   book
+LIST
+bye
+```
+
+Expected output:
+```text
+Filed on your task desk: [T][ ] read book
+1. [T][ ] read book
+Bye! See ya later.
+```
+
+```json
+{
+  "id": "TC-VALID-FLEXIBLE-WHITESPACE",
+  "aim": "Accept mixed command case and repeated spaces.",
+  "commands": [
+    "ToDo    read   book",
+    "LIST",
+    "bye"
+  ],
+  "expectedOutputs": [
+    ["Filed on your task desk: [T][ ] read book"],
+    ["1. [T][ ] read book"],
+    ["Bye! See ya later."]
+  ]
+}
+```
+
+## TC-INVALID-REPEATED-MARKER
+
+Aim: Reject a deadline with more than one `/by` marker.
+
+Commands:
+```text
+deadline return book /by 2/12/2019 /by 3/12/2019
+bye
+```
+
+Expected output:
+```text
+Oops: `deadline` accepts exactly one `/by` value.
+Bye! See ya later.
+```
+
+```json
+{
+  "id": "TC-INVALID-REPEATED-MARKER",
+  "aim": "Reject a deadline with more than one /by marker.",
+  "commands": [
+    "deadline return book /by 2/12/2019 /by 3/12/2019",
+    "bye"
+  ],
+  "expectedOutputs": [
+    ["Oops: `deadline` accepts exactly one `/by` value."],
+    ["Bye! See ya later."]
+  ]
+}
+```
+
+## TC-INVALID-EVENT-RANGE
+
+Aim: Reject an event that does not end after it starts.
+
+Commands:
+```text
+event meeting /from 2/12/2019 1600 /to 2/12/2019 1500
+bye
+```
+
+Expected output:
+```text
+Oops: an event must end after it starts.
+Bye! See ya later.
+```
+
+```json
+{
+  "id": "TC-INVALID-EVENT-RANGE",
+  "aim": "Reject an event that does not end after it starts.",
+  "commands": [
+    "event meeting /from 2/12/2019 1600 /to 2/12/2019 1500",
+    "bye"
+  ],
+  "expectedOutputs": [
+    ["Oops: an event must end after it starts."],
     ["Bye! See ya later."]
   ]
 }

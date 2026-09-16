@@ -30,6 +30,14 @@ class ParserTest {
     }
 
     @Test
+    void parse_tabsAndMixedCase_normalizesInput() {
+        Parser.ParsedInput parsedInput = Parser.parse("  ToDo\t  read   book  ");
+
+        assertEquals("todo", parsedInput.getCommand());
+        assertEquals("read book", parsedInput.getArgument());
+    }
+
+    @Test
     void parse_supportedAliases_returnsCanonicalCommands() {
         assertParsedInput("t read book", "todo", "read book");
         assertParsedInput(

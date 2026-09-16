@@ -32,6 +32,7 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
+Wrap every commit message body line at 72 characters or fewer, and verify the wrapping before committing.
 Do not commit or push unless explicitly asked.
 
 ## Coding and Git standards (mandatory)

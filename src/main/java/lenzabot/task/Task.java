@@ -14,7 +14,7 @@ public abstract class Task {
     protected final TaskType taskType;
 
     /** Whether this task has been completed. */
-    protected boolean completed = false;
+    protected boolean isCompleted = false;
 
     /**
      * Creates a task with a description and a fixed task category.
@@ -42,21 +42,21 @@ public abstract class Task {
      * @return True if this task is completed, otherwise false.
      */
     public boolean isCompleted() {
-        return this.completed;
+        return this.isCompleted;
     }
 
     /**
      * Marks this task as completed.
      */
     public void markAsCompleted() {
-        this.completed = true;
+        this.isCompleted = true;
     }
 
     /**
      * Marks this task as incomplete.
      */
     public void markAsIncomplete() {
-        this.completed = false;
+        this.isCompleted = false;
     }
 
     /**
@@ -65,7 +65,7 @@ public abstract class Task {
      * @return `X` when completed, or a space when incomplete.
      */
     public String getStatusIcon() {
-        return this.completed ? "X" : " ";
+        return this.isCompleted ? "X" : " ";
     }
 
     /**
